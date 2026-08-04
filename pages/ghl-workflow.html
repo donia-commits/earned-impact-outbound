@@ -1,37 +1,749 @@
-<title>GHL Workflow — Earned Impact</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="../css/styles.css">
+<title>GoHighLevel CRM Workflow — Earned Impact Outbound Operating System</title>
+<style>
+  :root{
+    --ink:#0B0B0C;
+    --ink-soft:#3A3A3D;
+    --muted:#8A8A8E;
+    --line:#EAEAE8;
+    --paper:#FFFFFF;
+    --tint:#FAFAF8;
+    --orange:#F0501F;
+    --orange-deep:#C93E15;
+    --orange-tint:#FDEAE3;
+    --orange-tint-2:#FFF3EE;
 
+    --stage-1:#5B6B84;
+    --stage-2:#3D74C9;
+    --stage-3:#2E8F8F;
+    --stage-4:#7A5FBF;
+    --stage-5:#C9762E;
+    --stage-decision:#0B0B0C;
+    --won:#2E9E5B;
+    --lost:#B23A3A;
+    --followup:#C99A2E;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+
+  a{color:inherit;}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 40px;}
+
+  /* ================= HEADER ================= */
+  header.hero{
+    background:var(--ink);
+    color:#fff;
+    position:relative;
+    overflow:hidden;
+    padding:44px 0 56px;
+  }
+  header.hero::after{
+    content:"";
+    position:absolute;
+    top:-120px; right:-160px;
+    width:420px; height:420px;
+    background:radial-gradient(circle at 30% 30%, var(--orange), var(--orange-deep) 70%);
+    border-radius:50%;
+    opacity:0.9;
+  }
+  .back-to-dashboard{
+    display:inline-block;
+    position:relative;z-index:2;
+    margin-bottom:24px;
+    font:600 13px/1.2 "Inter",sans-serif;
+    color:#fff;
+    text-decoration:none;
+    border:1px solid rgba(255,255,255,.3);
+    padding:8px 14px;
+    border-radius:6px;
+  }
+  .back-to-dashboard:hover{border-color:var(--orange);}
+  .brandrow{
+    display:flex;align-items:center;gap:12px;
+    position:relative;z-index:2;
+    margin-bottom:34px;
+  }
+  .brandmark{
+    width:34px;height:34px;border-radius:9px;
+    background:var(--orange);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:16px;color:#fff;
+    flex-shrink:0;
+  }
+  .brandname{font-weight:700;font-size:15px;letter-spacing:0.02em;color:#fff;}
+  .kicker{
+    position:relative;z-index:2;
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:11.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;
+    color:#F5B79E;
+    margin-bottom:16px;
+  }
+  .kicker .dot{width:6px;height:6px;border-radius:50%;background:var(--orange);}
+  h1.title{
+    position:relative;z-index:2;
+    font-size:clamp(32px,4.4vw,48px);
+    font-weight:800;
+    letter-spacing:-0.02em;
+    margin:0 0 14px;
+    max-width:760px;
+  }
+  p.subtitle{
+    position:relative;z-index:2;
+    font-size:17px;
+    color:#C7C7CC;
+    max-width:600px;
+    margin:0;
+  }
+  .meta-row{
+    position:relative;z-index:2;
+    display:flex;flex-wrap:wrap;gap:28px;
+    margin-top:32px;
+    padding-top:24px;
+    border-top:1px solid rgba(255,255,255,0.14);
+  }
+  .meta-item{font-size:12.5px;color:#9C9CA1;}
+  .meta-item b{display:block;color:#fff;font-size:13.5px;font-weight:600;margin-top:2px;}
+
+  /* ================= SECTION SCAFFOLDING ================= */
+  section{padding:64px 0;}
+  section.alt{background:var(--tint);}
+  section + section{border-top:1px solid var(--line);}
+
+  .eyebrow{
+    display:flex;align-items:center;gap:10px;
+    font-size:11.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;
+    color:var(--orange-deep);
+    margin-bottom:10px;
+  }
+  .eyebrow .num{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:20px;height:20px;border-radius:6px;
+    background:var(--orange-tint);
+    color:var(--orange-deep);
+    font-size:11px;font-weight:800;
+  }
+  h2.sectitle{
+    font-size:26px;font-weight:800;letter-spacing:-0.01em;
+    margin:0 0 10px;
+  }
+  p.secdesc{
+    font-size:15px;color:var(--ink-soft);
+    max-width:640px;
+    margin:0 0 34px;
+  }
+  .note{
+    display:flex;gap:12px;align-items:flex-start;
+    background:var(--orange-tint-2);
+    border:1px solid #F6D9CB;
+    border-radius:12px;
+    padding:14px 18px;
+    font-size:13.5px;
+    color:var(--orange-deep);
+    max-width:640px;
+  }
+  .note svg{flex-shrink:0;margin-top:2px;}
+  .note b{font-weight:700;}
+
+  /* ================= FLOW (vertical) ================= */
+  .flow-vert{display:flex;flex-direction:column;align-items:flex-start;gap:0;margin-bottom:28px;}
+  .flow-node{
+    display:flex;align-items:center;gap:14px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:14px 20px;
+    min-width:260px;
+    box-shadow:0 1px 2px rgba(11,11,12,0.03);
+  }
+  .flow-node .ic{
+    width:30px;height:30px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--orange-tint);color:var(--orange-deep);
+    flex-shrink:0;
+  }
+  .flow-node .label{font-weight:700;font-size:14.5px;}
+  .flow-node .sub{font-size:12px;color:var(--muted);}
+  .flow-node.dim{opacity:0.55;}
+  .flow-node.hi{border-color:var(--orange);box-shadow:0 0 0 3px var(--orange-tint);}
+  .flow-arrow-v{
+    display:flex;align-items:center;justify-content:center;
+    width:260px;padding:6px 0;
+    color:var(--muted);
+  }
+
+  /* ================= CHECKLIST GRID ================= */
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+  .check-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:18px 20px;
+    display:flex;align-items:flex-start;gap:12px;
+    transition:box-shadow .15s ease, transform .15s ease;
+  }
+  .check-card:hover{box-shadow:0 6px 20px rgba(11,11,12,0.06);transform:translateY(-1px);cursor:pointer;}
+  .check-card .tick{
+    width:22px;height:22px;border-radius:50%;
+    background:var(--orange);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-top:1px;
+  }
+  .check-card .txt{font-size:14px;font-weight:600;color:var(--ink);}
+  .check-card .txt small{display:block;font-weight:400;color:var(--muted);font-size:12px;margin-top:2px;}
+
+  /* ================= PIPELINE ================= */
+  .pipeline-scroll{overflow-x:auto;padding-bottom:8px;margin-bottom:22px;}
+  .pipeline{
+    display:flex;align-items:stretch;gap:0;min-width:920px;
+  }
+  .stage{
+    flex:1;position:relative;
+    display:flex;flex-direction:column;align-items:center;
+    padding-top:6px;
+  }
+  .stage .connector{
+    position:absolute;top:24px;left:-50%;width:100%;height:2px;
+    background:var(--line);z-index:0;
+  }
+  .stage:first-child .connector{display:none;}
+  .stage .node{
+    position:relative;z-index:1;
+    width:46px;height:46px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:800;font-size:14px;
+    box-shadow:0 2px 6px rgba(11,11,12,0.15);
+    margin-bottom:12px;
+  }
+  .stage .stagename{font-size:12.5px;font-weight:700;text-align:center;max-width:120px;color:var(--ink);}
+  .stage .stagetag{font-size:10.5px;color:var(--muted);text-align:center;margin-top:2px;text-transform:uppercase;letter-spacing:0.06em;}
+
+  .stage-decision-col{position:relative;}
+  .branch-wrap{
+    display:flex;align-items:flex-start;justify-content:center;gap:22px;
+    margin-top:22px;
+    position:relative;
+  }
+  .branch-wrap::before{
+    content:"";position:absolute;top:-14px;left:50%;width:2px;height:14px;
+    background:var(--line);transform:translateX(-50%);
+  }
+  .branch{
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    position:relative;
+  }
+  .branch .node{
+    width:44px;height:44px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;font-weight:800;font-size:13px;
+    box-shadow:0 2px 6px rgba(11,11,12,0.15);
+  }
+  .branch .stagename{font-size:12px;font-weight:700;}
+
+  .legend{
+    display:flex;flex-wrap:wrap;gap:18px;
+    margin-top:36px;padding:16px 20px;
+    background:var(--paper);border:1px solid var(--line);border-radius:12px;
+  }
+  .legend-item{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-soft);}
+  .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+
+  /* ================= AUTOMATION CARDS ================= */
+  .auto-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  .auto-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:22px;
+    transition:box-shadow .15s ease, transform .15s ease;
+  }
+  .auto-card:hover{box-shadow:0 8px 24px rgba(11,11,12,0.07);transform:translateY(-2px);cursor:pointer;}
+  .auto-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .auto-head .trigger-ic{
+    width:32px;height:32px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--orange-tint);color:var(--orange-deep);flex-shrink:0;
+  }
+  .auto-head .trigger-name{font-weight:700;font-size:14.5px;}
+  .auto-head .trigger-label{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;}
+  .auto-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;}
+  .auto-list li{
+    display:flex;align-items:center;gap:9px;
+    font-size:13px;color:var(--ink-soft);
+  }
+  .auto-list li::before{
+    content:"";width:5px;height:5px;border-radius:50%;background:var(--orange);flex-shrink:0;
+  }
+
+  /* ================= REPORTING ================= */
+  .report-card{
+    background:var(--paper);border:1px solid var(--line);border-radius:16px;
+    padding:30px 32px;
+  }
+  .report-metrics{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+    margin-bottom:24px;
+  }
+  .metric{
+    padding:14px 18px;
+    border-right:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+  .metric:nth-child(4n){border-right:none;}
+  .metric .m-name{font-size:12.5px;color:var(--muted);font-weight:600;}
+  .report-note{
+    display:flex;gap:10px;align-items:flex-start;
+    font-size:13px;color:var(--ink-soft);
+    background:var(--tint);border:1px solid var(--line);border-radius:10px;
+    padding:12px 16px;margin-top:4px;
+  }
+  .report-note b{color:var(--ink);}
+
+  /* ================= INTEGRATIONS ================= */
+  .integ-row{
+    display:flex;align-items:center;justify-content:center;gap:0;
+    flex-wrap:wrap;
+    background:var(--paper);border:1px solid var(--line);border-radius:14px;
+    padding:26px 20px;
+  }
+  .integ-node{
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    min-width:110px;padding:0 6px;
+  }
+  .integ-node .ic{
+    width:44px;height:44px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--tint);border:1px solid var(--line);color:var(--ink-soft);
+  }
+  .integ-node.hi .ic{background:var(--orange);color:#fff;border-color:var(--orange);}
+  .integ-node .name{font-size:12px;font-weight:700;text-align:center;}
+  .integ-arrow{color:var(--muted);flex-shrink:0;padding:0 4px;}
+
+  /* ================= OWNS / NOT MANAGED ================= */
+  .owns-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .owns-card{
+    border-radius:16px;padding:26px 28px;
+  }
+  .owns-card.yes{background:#F1FAF4;border:1px solid #CDECD7;}
+  .owns-card.no{background:#FAFAF9;border:1px solid var(--line);}
+  .owns-card h3{margin:0 0 16px;font-size:15px;font-weight:800;letter-spacing:-0.01em;}
+  .owns-card.yes h3{color:#1E7A44;}
+  .owns-card.no h3{color:var(--muted);}
+  .owns-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px;}
+  .owns-list li{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;}
+  .owns-card.yes .owns-list li{color:#215C39;}
+  .owns-card.no .owns-list li{color:#9A9A9C;}
+  .owns-card.yes .owns-list li svg{color:#2E9E5B;flex-shrink:0;}
+  .owns-card.no .owns-list li svg{color:#C4423B;flex-shrink:0;}
+
+  /* ================= FOOTER ================= */
+  footer{
+    background:var(--ink);color:#C7C7CC;
+    padding:40px 0;
+  }
+  .foot-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;}
+  .foot-brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:14px;}
+  .foot-note{font-size:13px;max-width:520px;color:#9C9CA1;}
+  .foot-tag{font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#F5B79E;font-weight:700;}
+
+  @media (max-width:920px){
+    .wrap{padding:0 22px;}
+    .grid-3, .auto-grid{grid-template-columns:1fr;}
+    .grid-2, .owns-grid{grid-template-columns:1fr;}
+    .report-metrics{grid-template-columns:repeat(2,1fr);}
+    .metric:nth-child(2n){border-right:none;}
+    .metric:nth-child(4n){border-right:1px solid var(--line);}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+</style>
+</head>
 <body>
+
+<header class="hero">
   <div class="wrap">
-    <div class="page-header">
-      <div>
-        <p class="eyebrow">Earned Impact · CRM &amp; Pipeline</p>
-        <h1>GHL Workflow</h1>
-      </div>
-      <a class="back-link" href="../index.html">← Back to Dashboard</a>
+    <a class="back-to-dashboard" href="../index.html">← Back to Dashboard</a>
+    <div class="brandrow">
+      <div class="brandmark">EI</div>
+      <div class="brandname">Earned Impact</div>
     </div>
-
-    <div class="content-card">
-      <div class="placeholder-banner">
-        <strong>Source file not found in this repository</strong>
-        This card previously pointed to <code>file:///C:/Users/RAM/Downloads/ghl-crm-workflow.html</code> — a file on a local machine that was never uploaded here. Send me that HTML (or its content) and I'll drop it into <code>pages/ghl-workflow.html</code> with the design/layout untouched, replacing this placeholder.
-      </div>
-
-      <section>
-        <h2>What's confirmed today (Current Stack Audit v3)</h2>
-        <ul class="tight">
-          <li><strong>Platform decision:</strong> CRM = GoHighLevel (GHL) — decided, not yet configured.</li>
-          <li><strong>Calendar:</strong> moving from Calendly to GHL's native calendar; cutover date not yet confirmed.</li>
-          <li><strong>Status:</strong> Selected — Pending. Next action is to configure the pipeline, automations, and the BigQuery link.</li>
-          <li><strong>Owner:</strong> Donia. Blocking for Phase 2 (Infrastructure Build).</li>
-        </ul>
-        <p class="note">Full detail lives in the Current Stack Audit and BigQuery Data Warehouse Specification documents.</p>
-      </section>
+    <div class="kicker"><span class="dot"></span>Outbound Operating System &nbsp;·&nbsp; Post-Qualification Workflow</div>
+    <h1 class="title">GoHighLevel CRM Workflow</h1>
+    <p class="subtitle">Operations flow after a qualified lead enters the CRM.</p>
+    <div class="meta-row">
+      <div class="meta-item">Scope<b>Inside GoHighLevel only</b></div>
+      <div class="meta-item">Upstream systems<b>BigQuery &amp; ReadyMode (see separate specs)</b></div>
+      <div class="meta-item">Audience<b>Damon Stewart &amp; Kaelene Spence</b></div>
+      <div class="meta-item">Status<b>Reusable CRM template</b></div>
     </div>
-
-    <p class="footer-note">Earned Impact — Outbound Operating System · Internal Use</p>
   </div>
+</header>
+
+<!-- ============================================================ -->
+<!-- SECTION 1 — LEAD ENTRY -->
+<!-- ============================================================ -->
+<section id="entry">
+  <div class="wrap">
+    <div class="eyebrow"><span class="num">1</span>Lead Entry</div>
+    <h2 class="sectitle">How a lead arrives in GoHighLevel</h2>
+    <p class="secdesc">GHL only ever receives leads that have already been vetted upstream. Nothing enters this system unqualified.</p>
+
+    <div class="flow-vert">
+      <div class="flow-node dim">
+        <div class="ic">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 7c0-1.66 3.58-3 8-3s8 1.34 8 3-3.58 3-8 3-8-1.34-8-3z" stroke="currentColor" stroke-width="2"/><path d="M4 7v10c0 1.66 3.58 3 8 3s8-1.34 8-3V7" stroke="currentColor" stroke-width="2"/><path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <div><div class="label">BigQuery</div><div class="sub">Master prospect database</div></div>
+      </div>
+      <div class="flow-arrow-v">
+        <svg width="14" height="24" viewBox="0 0 14 24" fill="none"><path d="M7 2v18M7 20l-5-5M7 20l5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="flow-node dim">
+        <div class="ic">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22 16.92V19a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 013.11 4.18 2 2 0 015.09 2h2.11a2 2 0 012 1.72c.13.98.36 1.94.68 2.86a2 2 0 01-.45 2.11L8.09 10a16 16 0 006 6l1.31-1.34a2 2 0 012.11-.45c.92.32 1.88.55 2.86.68A2 2 0 0122 16.92z" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <div><div class="label">ReadyMode</div><div class="sub">Dialer &amp; live calling</div></div>
+      </div>
+      <div class="flow-arrow-v">
+        <svg width="14" height="24" viewBox="0 0 14 24" fill="none"><path d="M7 2v18M7 20l-5-5M7 20l5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="flow-node">
+        <div class="ic">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2l3 6 7 1-5 5 1.2 7-6.2-3.3L5.8 21 7 14 2 9l7-1 3-6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        </div>
+        <div><div class="label">Qualified Lead</div><div class="sub">Passed screening in ReadyMode</div></div>
+      </div>
+      <div class="flow-arrow-v">
+        <svg width="14" height="24" viewBox="0 0 14 24" fill="none"><path d="M7 2v18M7 20l-5-5M7 20l5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="flow-node hi">
+        <div class="ic" style="background:var(--orange);color:#fff;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" stroke-width="2"/><path d="M3 9h18" stroke="currentColor" stroke-width="2"/><path d="M8 2v4M16 2v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div><div class="label">GoHighLevel</div><div class="sub">CRM &amp; customer journey begins</div></div>
+      </div>
+    </div>
+
+    <div class="note">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
+      <div><b>Only Qualified Leads and Booked Meetings enter GoHighLevel.</b> Everything upstream of qualification stays in BigQuery and ReadyMode.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 2 — CONTACT CREATION -->
+<!-- ============================================================ -->
+<section class="alt" id="contact">
+  <div class="wrap">
+    <div class="eyebrow"><span class="num">2</span>Contact Creation</div>
+    <h2 class="sectitle">What happens the moment a lead enters GHL</h2>
+    <p class="secdesc">A fixed sequence runs on every new record, whether it's a brand-new contact or one GHL already recognizes.</p>
+
+    <div class="grid-3">
+      <div class="check-card">
+        <div class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="txt">Create Contact<small>If the lead is new to GHL</small></div>
+      </div>
+      <div class="check-card">
+        <div class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="txt">Update Contact<small>If a matching record already exists</small></div>
+      </div>
+      <div class="check-card">
+        <div class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="txt">Apply Tags<small>Standardized for segmentation</small></div>
+      </div>
+      <div class="check-card">
+        <div class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="txt">Update Custom Fields<small>Program, org type, budget tier, etc.</small></div>
+      </div>
+      <div class="check-card">
+        <div class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="txt">Assign Lead Source<small>Traceable back to origin campaign</small></div>
+      </div>
+      <div class="check-card">
+        <div class="tick"><svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="txt">Assign Owner<small>Routed to the right rep</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 3 — SALES PIPELINE -->
+<!-- ============================================================ -->
+<section id="pipeline">
+  <div class="wrap">
+    <div class="eyebrow"><span class="num">3</span>Sales Pipeline</div>
+    <h2 class="sectitle">Stage-by-stage journey to a decision</h2>
+    <p class="secdesc">Every contact moves through the same pipeline. At Decision, the record branches into exactly one outcome.</p>
+
+    <div class="pipeline-scroll">
+      <div class="pipeline">
+        <div class="stage">
+          <div class="node" style="background:var(--stage-1);">1</div>
+          <div class="stagename">Qualified Lead</div>
+          <div class="stagetag">Entry</div>
+        </div>
+        <div class="stage">
+          <div class="connector"></div>
+          <div class="node" style="background:var(--stage-1);">2</div>
+          <div class="stagename">Appointment Scheduled</div>
+          <div class="stagetag">Booked</div>
+        </div>
+        <div class="stage">
+          <div class="connector"></div>
+          <div class="node" style="background:var(--stage-2);">3</div>
+          <div class="stagename">Appointment Confirmed</div>
+          <div class="stagetag">Confirmed</div>
+        </div>
+        <div class="stage">
+          <div class="connector"></div>
+          <div class="node" style="background:var(--stage-2);">4</div>
+          <div class="stagename">Meeting Completed</div>
+          <div class="stagetag">Held</div>
+        </div>
+        <div class="stage">
+          <div class="connector"></div>
+          <div class="node" style="background:var(--stage-3);">5</div>
+          <div class="stagename">Proposal Sent</div>
+          <div class="stagetag">In Market</div>
+        </div>
+        <div class="stage stage-decision-col">
+          <div class="connector"></div>
+          <div class="node" style="background:var(--stage-decision);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2l3 6 7 1-5 5 1.2 7-6.2-3.3L5.8 21 7 14 2 9l7-1 3-6z" fill="#fff"/></svg>
+          </div>
+          <div class="stagename">Decision</div>
+          <div class="stagetag">Branch point</div>
+
+          <div class="branch-wrap">
+            <div class="branch">
+              <div class="node" style="background:var(--won);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div class="stagename" style="color:var(--won);">Won</div>
+            </div>
+            <div class="branch">
+              <div class="node" style="background:var(--lost);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg></div>
+              <div class="stagename" style="color:var(--lost);">Lost</div>
+            </div>
+            <div class="branch">
+              <div class="node" style="background:var(--followup);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 6v6l4 2" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2"/></svg></div>
+              <div class="stagename" style="color:var(--followup);">Follow-Up</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><span class="legend-dot" style="background:var(--stage-1);"></span>Pipeline entry</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--stage-2);"></span>Meeting lifecycle</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--stage-3);"></span>In market / proposal</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--stage-decision);"></span>Decision point</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--won);"></span>Won outcome</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--lost);"></span>Lost outcome</div>
+      <div class="legend-item"><span class="legend-dot" style="background:var(--followup);"></span>Follow-up outcome</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 4 — AUTOMATIONS -->
+<!-- ============================================================ -->
+<section class="alt" id="automations">
+  <div class="wrap">
+    <div class="eyebrow"><span class="num">4</span>Automations</div>
+    <h2 class="sectitle">What fires automatically at each trigger</h2>
+    <p class="secdesc">No manual step is required for any of the actions below — GHL executes them the moment the trigger condition is met.</p>
+
+    <div class="auto-grid">
+      <div class="auto-card">
+        <div class="auto-head">
+          <div class="trigger-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" stroke-width="2"/><path d="M3 9h18" stroke="currentColor" stroke-width="2"/></svg></div>
+          <div><div class="trigger-label">Trigger</div><div class="trigger-name">Appointment Scheduled</div></div>
+        </div>
+        <ul class="auto-list">
+          <li>Confirmation Email</li>
+          <li>Calendar Invite</li>
+          <li>Internal Notification</li>
+          <li>Create Sales Task</li>
+        </ul>
+      </div>
+
+      <div class="auto-card">
+        <div class="auto-head">
+          <div class="trigger-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div><div class="trigger-label">Trigger</div><div class="trigger-name">24 Hours Before Meeting</div></div>
+        </div>
+        <ul class="auto-list">
+          <li>Reminder Email</li>
+        </ul>
+      </div>
+
+      <div class="auto-card">
+        <div class="auto-head">
+          <div class="trigger-ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div><div class="trigger-label">Trigger</div><div class="trigger-name">Meeting Completed</div></div>
+        </div>
+        <ul class="auto-list">
+          <li>Move Pipeline Stage</li>
+          <li>Create Follow-Up Task</li>
+          <li>Notify Sales Team</li>
+        </ul>
+      </div>
+
+      <div class="auto-card">
+        <div class="auto-head">
+          <div class="trigger-ic" style="background:#EAF7EE;color:#2E9E5B;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2l3 6 7 1-5 5 1.2 7-6.2-3.3L5.8 21 7 14 2 9l7-1 3-6z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></div>
+          <div><div class="trigger-label">Trigger</div><div class="trigger-name">Won</div></div>
+        </div>
+        <ul class="auto-list">
+          <li>Begin Client Onboarding</li>
+          <li>Internal Notification</li>
+        </ul>
+      </div>
+
+      <div class="auto-card">
+        <div class="auto-head">
+          <div class="trigger-ic" style="background:#FBEBEA;color:#B23A3A;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+          <div><div class="trigger-label">Trigger</div><div class="trigger-name">Lost</div></div>
+        </div>
+        <ul class="auto-list">
+          <li>Record Lost Reason</li>
+        </ul>
+      </div>
+
+      <div class="auto-card">
+        <div class="auto-head">
+          <div class="trigger-ic" style="background:#FBF3E2;color:#C99A2E;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/></svg></div>
+          <div><div class="trigger-label">Trigger</div><div class="trigger-name">Follow-Up</div></div>
+        </div>
+        <ul class="auto-list">
+          <li>Move to Follow-Up Pipeline</li>
+          <li>Schedule Future Follow-Up</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 5 — REPORTING -->
+<!-- ============================================================ -->
+<section id="reporting">
+  <div class="wrap">
+    <div class="eyebrow"><span class="num">5</span>Reporting</div>
+    <h2 class="sectitle">What GHL tracks at the account level</h2>
+    <p class="secdesc">These are the pipeline metrics visible inside GoHighLevel for day-to-day management.</p>
+
+    <div class="report-card">
+      <div class="report-metrics">
+        <div class="metric"><div class="m-name">Qualified Leads</div></div>
+        <div class="metric"><div class="m-name">Appointments Scheduled</div></div>
+        <div class="metric"><div class="m-name">Meeting Show Rate</div></div>
+        <div class="metric"><div class="m-name">Proposal Rate</div></div>
+        <div class="metric"><div class="m-name">Win Rate</div></div>
+        <div class="metric"><div class="m-name">Lost Opportunities</div></div>
+        <div class="metric"><div class="m-name">Follow-Up Opportunities</div></div>
+        <div class="metric"><div class="m-name">Pipeline Value</div></div>
+      </div>
+      <div class="report-note">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;margin-top:2px;"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
+        <div><b>GoHighLevel manages the sales pipeline and customer journey.</b> BigQuery remains the master reporting database.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 6 — INTEGRATIONS -->
+<!-- ============================================================ -->
+<section class="alt" id="integrations">
+  <div class="wrap">
+    <div class="eyebrow"><span class="num">6</span>Integrations</div>
+    <h2 class="sectitle">Where GHL sits in the wider stack</h2>
+    <p class="secdesc">A single lead's data trail from source database to sales team notification.</p>
+
+    <div class="integ-row">
+      <div class="integ-node"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 7c0-1.66 3.58-3 8-3s8 1.34 8 3-3.58 3-8 3-8-1.34-8-3z" stroke="currentColor" stroke-width="2"/><path d="M4 7v10c0 1.66 3.58 3 8 3s8-1.34 8-3V7" stroke="currentColor" stroke-width="2"/></svg></div><div class="name">BigQuery</div></div>
+      <div class="integ-arrow"><svg width="20" height="14" viewBox="0 0 20 14" fill="none"><path d="M1 7h16M13 1l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="integ-node"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22 16.92V19a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 013.11 4.18 2 2 0 015.09 2h2.11a2 2 0 012 1.72c.13.98.36 1.94.68 2.86a2 2 0 01-.45 2.11L8.09 10a16 16 0 006 6l1.31-1.34a2 2 0 012.11-.45c.92.32 1.88.55 2.86.68A2 2 0 0122 16.92z" stroke="currentColor" stroke-width="2"/></svg></div><div class="name">ReadyMode</div></div>
+      <div class="integ-arrow"><svg width="20" height="14" viewBox="0 0 20 14" fill="none"><path d="M1 7h16M13 1l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="integ-node hi"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="3" stroke="currentColor" stroke-width="2"/><path d="M3 9h18" stroke="currentColor" stroke-width="2"/></svg></div><div class="name">GoHighLevel</div></div>
+      <div class="integ-arrow"><svg width="20" height="14" viewBox="0 0 20 14" fill="none"><path d="M1 7h16M13 1l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="integ-node"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 4h16v16H4z" stroke="currentColor" stroke-width="2"/><path d="M4 6l8 6 8-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="name">Email</div></div>
+      <div class="integ-arrow"><svg width="20" height="14" viewBox="0 0 20 14" fill="none"><path d="M1 7h16M13 1l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="integ-node"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="17" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 9h18M8 2v4M16 2v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><div class="name">Calendar</div></div>
+      <div class="integ-arrow"><svg width="20" height="14" viewBox="0 0 20 14" fill="none"><path d="M1 7h16M13 1l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="integ-node"><div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2"/></svg></div><div class="name">Sales Team</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 7 — WHAT GHL OWNS -->
+<!-- ============================================================ -->
+<section id="ownership">
+  <div class="wrap">
+    <div class="eyebrow"><span class="num">7</span>System Ownership</div>
+    <h2 class="sectitle">What GHL owns — and what stays out of it</h2>
+    <p class="secdesc">A clear boundary keeps the stack modular: each system owns exactly one part of the lead's life cycle.</p>
+
+    <div class="owns-grid">
+      <div class="owns-card yes">
+        <h3>GHL OWNS</h3>
+        <ul class="owns-list">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/></svg>CRM</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/></svg>Contact Records</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/></svg>Sales Pipeline</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/></svg>Tasks</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/></svg>Calendar</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/></svg>Email Automations</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/></svg>Opportunity Tracking</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor"/></svg>Client Follow-Up</li>
+        </ul>
+      </div>
+      <div class="owns-card no">
+        <h3>NOT MANAGED IN GHL</h3>
+        <ul class="owns-list">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke-width="2.5" stroke-linecap="round" stroke="currentColor"/></svg>Prospect Database</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke-width="2.5" stroke-linecap="round" stroke="currentColor"/></svg>Data Enrichment</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke-width="2.5" stroke-linecap="round" stroke="currentColor"/></svg>Cold Calling Queue</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke-width="2.5" stroke-linecap="round" stroke="currentColor"/></svg>Dialer</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke-width="2.5" stroke-linecap="round" stroke="currentColor"/></svg>Master Reporting</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-row">
+      <div>
+        <div class="foot-brand"><div class="brandmark" style="width:26px;height:26px;font-size:12px;">EI</div>Earned Impact</div>
+        <p class="foot-note" style="margin-top:12px;">This workflow is part of the Earned Impact Outbound Operating System and serves as the reusable CRM template for future client deployments.</p>
+      </div>
+      <div class="foot-tag">One Build. Deployed Twice.</div>
+    </div>
+  </div>
+</footer>
+
 </body>
+</html>
