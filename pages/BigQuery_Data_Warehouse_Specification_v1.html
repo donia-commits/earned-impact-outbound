@@ -1,0 +1,285 @@
+<title>BigQuery Data Warehouse Specification — Earned Impact</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../css/styles.css">
+
+<body>
+  <div class="wrap">
+    <div class="page-header">
+      <div>
+        <p class="eyebrow">Earned Impact · Internal Engineering Specification · v1</p>
+        <h1>BigQuery Data Warehouse Specification</h1>
+      </div>
+      <a class="back-link" href="../index.html">← Back to Dashboard</a>
+    </div>
+
+    <div class="content-card">
+      <p class="kicker">A repeatable data architecture standard for Earned Impact's outbound operating system — the master template for every future client implementation, beginning with Phase 2: Infrastructure Build. Not client-facing.</p>
+
+      <section>
+        <h2>1. Executive Summary</h2>
+        <p>This document defines Version 1 of Earned Impact's BigQuery Data Warehouse — the internal engineering specification for how prospect, activity, and performance data is structured, stored, and moved across the outbound technology stack. It is written for engineering and operations use, not for client presentation.</p>
+        <p><strong>Purpose:</strong> as Earned Impact's outbound department scales from one internal build to a repeatable, multi-client operating system, every tool in the stack — the dialer, the CRM, enrichment providers, and reporting — needs one shared, trustworthy data layer underneath it. This document defines that layer.</p>
+        <p><strong>Why BigQuery exists:</strong> today, prospect and activity data is split across ReadyMode, GoHighLevel, spreadsheets, and enrichment tools, each with its own partial view. Without a central warehouse, list building, suppression, and reporting all depend on manual reconciliation between systems — which does not scale past a single account, let alone a portfolio of clients.</p>
+        <p><strong>Why BigQuery is the source of truth:</strong> every operational system (ReadyMode, GoHighLevel) is a consumer or contributor to BigQuery — never the authority on its own. If a number in a dashboard, a suppression list, or a contact record is ever in question, BigQuery is the only place the answer should be looked up.</p>
+        <p><strong>High-level architecture:</strong> enrichment and list sources (Apollo, FullEnrich, CSV/Sheets imports) feed contact and company records into BigQuery. BigQuery pushes calling lists out to ReadyMode IQ; ReadyMode pushes call outcomes and dispositions back in. Qualified contacts and booked meetings flow from BigQuery into GoHighLevel; meeting outcomes and pipeline changes sync back. All reporting is generated directly from BigQuery, never from a point tool. Gemini sits alongside the warehouse as an AI enrichment and qualification aid, not as a system of record.</p>
+        <p class="note">This is a v1 specification, scoped to the current single-client implementation (Earned Impact), written so every naming convention, schema decision, and data-flow rule holds up unchanged when a second client (e.g. TriChad) is added. Section 8 lists what is deliberately out of scope for this version.</p>
+      </section>
+
+      <section>
+        <h2>2. System Overview</h2>
+        <table class="objection-table">
+          <thead><tr><th>Platform</th><th>Role</th><th>Relationship to BigQuery</th></tr></thead>
+          <tbody>
+            <tr><td>BigQuery</td><td>Master data warehouse. Single source of truth for contacts, companies, campaigns, activity, and reporting.</td><td>Authoritative — all other systems read from or write to it.</td></tr>
+            <tr><td>ReadyMode IQ</td><td>Outbound dialer and calling execution.</td><td>Consumes contact lists from BigQuery; writes call outcomes and dispositions back.</td></tr>
+            <tr><td>GoHighLevel</td><td>Light CRM / pipeline for qualified contacts, meetings, and opportunities.</td><td>Consumes qualified contacts and meetings from BigQuery; writes pipeline updates back.</td></tr>
+            <tr><td>Apollo (optional)</td><td>Prospect sourcing and firmographic data, used on a per-project basis.</td><td>Source-only. Feeds new contact/company records into BigQuery.</td></tr>
+            <tr><td>FullEnrich</td><td>Contact and company data enrichment (verified emails, phones, firmographics).</td><td>Source-only. Enriches records before or after they land in BigQuery.</td></tr>
+            <tr><td>Gemini</td><td>AI-assisted enrichment support and qualification / research assistance.</td><td>Advisory. Reads from BigQuery for context; does not own any table.</td></tr>
+            <tr><td>Google Sheets</td><td>Manual list staging, one-off imports, and lightweight ad hoc tracking during setup.</td><td>Source-only, transitional. Should not persist once BigQuery is live.</td></tr>
+            <tr><td>CSV Imports</td><td>Bulk uploads of purchased, scraped, or client-provided contact lists.</td><td>Source-only. Ingested via scheduled or manual load into staging tables.</td></tr>
+          </tbody>
+        </table>
+        <p class="note">Not yet in scope for this version: cold email platform, LinkedIn automation tooling, AI outbound agents, SMS automation, and any revenue-attribution layer. Named in Section 8 (Future Expansion) only.</p>
+      </section>
+
+      <section>
+        <h2>3. Database Architecture</h2>
+        <p class="note">Each table is defined with its purpose, keys, recommended columns, relationships, and a best practice. Field lists are the recommended v1 column set.</p>
+
+        <h3>3.1 Companies</h3>
+        <p>Stores the organization-level record for every prospect account. <strong>Primary Key:</strong> company_id &nbsp; <strong>Foreign Keys:</strong> client_id</p>
+        <table class="objection-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>company_id</td><td>STRING</td><td>Unique identifier (required). Generated at ingestion, never reused.</td></tr>
+            <tr><td>client_id</td><td>STRING</td><td>Which Earned Impact client this record belongs to (required for multi-client support).</td></tr>
+            <tr><td>name</td><td>STRING</td><td>Legal or commonly-used organization name.</td></tr>
+            <tr><td>domain</td><td>STRING</td><td>Primary website domain — used as a natural dedupe key alongside name.</td></tr>
+            <tr><td>industry</td><td>STRING</td><td>Vertical / org type, e.g. higher-ed, mental health, trade org.</td></tr>
+            <tr><td>org_size</td><td>STRING</td><td>Bucketed size, e.g. by budget or headcount, per the client's ICP definition.</td></tr>
+            <tr><td>source_system</td><td>STRING</td><td>Where the record originated (Apollo, CSV, manual, etc.) — required for auditability.</td></tr>
+            <tr><td>created_at / updated_at</td><td>TIMESTAMP</td><td>Standard audit timestamps on every table (see Section 7).</td></tr>
+          </tbody>
+        </table>
+        <p class="note">Relationships: one-to-many with Contacts and Campaigns. Best practice: deduplicate on domain + normalized name before insert, not after — a messy Companies table is the single most common source of bad suppression logic downstream.</p>
+
+        <h3>3.2 Contacts</h3>
+        <p>The individual prospect record — the level at which calls, emails, and meetings actually happen. <strong>Primary Key:</strong> contact_id &nbsp; <strong>Foreign Keys:</strong> company_id</p>
+        <table class="objection-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>contact_id</td><td>STRING</td><td>Unique identifier (required).</td></tr>
+            <tr><td>company_id</td><td>STRING</td><td>Links to the parent Companies record.</td></tr>
+            <tr><td>full_name</td><td>STRING</td><td>Contact's name.</td></tr>
+            <tr><td>title</td><td>STRING</td><td>Job title — used for buyer-persona segmentation.</td></tr>
+            <tr><td>email</td><td>STRING</td><td>Primary email, ideally FullEnrich-verified.</td></tr>
+            <tr><td>phone</td><td>STRING</td><td>Primary dialable number.</td></tr>
+            <tr><td>linkedin_url</td><td>STRING</td><td>Profile URL, if available.</td></tr>
+            <tr><td>contact_status</td><td>STRING</td><td>Lifecycle status: new, enriched, in_sequence, dnc, converted, etc.</td></tr>
+            <tr><td>source_system</td><td>STRING</td><td>Origin of the record (Apollo, CSV, manual, referral).</td></tr>
+          </tbody>
+        </table>
+        <p class="note">Relationships: many-to-one with Companies; one-to-many with Calls, Email/LinkedIn Activity, and Meetings. Best practice: contact_status should be a controlled vocabulary, not free text.</p>
+
+        <h3>3.3 Campaigns</h3>
+        <p>The container for a specific outbound push — a defined audience, offer, and time window for one client. <strong>Primary Key:</strong> campaign_id &nbsp; <strong>Foreign Keys:</strong> client_id</p>
+        <table class="objection-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>campaign_id</td><td>STRING</td><td>Unique identifier (required).</td></tr>
+            <tr><td>client_id</td><td>STRING</td><td>Owning client — critical for multi-client rollout.</td></tr>
+            <tr><td>name</td><td>STRING</td><td>Human-readable campaign name.</td></tr>
+            <tr><td>channel_mix</td><td>STRING</td><td>Which channels are active: calls, email, LinkedIn, SMS (future).</td></tr>
+            <tr><td>status</td><td>STRING</td><td>planning, active, paused, complete.</td></tr>
+            <tr><td>start_date / end_date</td><td>DATE</td><td>Planned or actual campaign window.</td></tr>
+            <tr><td>offer_id</td><td>STRING</td><td>Reference to the offer/messaging variant being tested, if applicable.</td></tr>
+          </tbody>
+        </table>
+        <p class="note">Best practice: never reuse a campaign_id across a re-launch — version it (e.g. suffix -v2) so historical reporting stays accurate.</p>
+
+        <h3>3.4 Sequences</h3>
+        <p>Defines the ordered set of touches (call, email, LinkedIn steps) that make up a campaign's outreach cadence. <strong>Primary Key:</strong> sequence_id &nbsp; <strong>Foreign Keys:</strong> campaign_id</p>
+        <table class="objection-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>sequence_id</td><td>STRING</td><td>Unique identifier (required).</td></tr>
+            <tr><td>campaign_id</td><td>STRING</td><td>Parent campaign.</td></tr>
+            <tr><td>step_order</td><td>INTEGER</td><td>Position of this step within the cadence.</td></tr>
+            <tr><td>channel</td><td>STRING</td><td>call, email, linkedin, sms (future).</td></tr>
+            <tr><td>template_ref</td><td>STRING</td><td>Pointer to the script/template/asset used at this step.</td></tr>
+            <tr><td>wait_days</td><td>INTEGER</td><td>Delay before this step fires relative to the previous one.</td></tr>
+          </tbody>
+        </table>
+        <p class="note">Best practice: keep templates themselves out of BigQuery (they belong in the asset/knowledge base); store only the reference so copy edits don't require warehouse changes.</p>
+
+        <h3>3.5 Calls</h3>
+        <p>One row per dial made through ReadyMode. <strong>Primary Key:</strong> call_id &nbsp; <strong>Foreign Keys:</strong> contact_id, campaign_id, user_id</p>
+        <table class="objection-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>call_id</td><td>STRING</td><td>Unique identifier, ideally ReadyMode's native call ID (required).</td></tr>
+            <tr><td>contact_id</td><td>STRING</td><td>Who was called.</td></tr>
+            <tr><td>campaign_id</td><td>STRING</td><td>Which campaign this dial belongs to.</td></tr>
+            <tr><td>user_id</td><td>STRING</td><td>Which SDR made the call.</td></tr>
+            <tr><td>call_timestamp</td><td>TIMESTAMP</td><td>When the call occurred.</td></tr>
+            <tr><td>duration_seconds</td><td>INTEGER</td><td>Talk time.</td></tr>
+            <tr><td>recording_url</td><td>STRING</td><td>Link to the call recording, if retained.</td></tr>
+          </tbody>
+        </table>
+        <p class="note">Best practice: load raw call events from ReadyMode on a fixed schedule (e.g. every 15–30 minutes) rather than real-time streaming for v1.</p>
+
+        <h3>3.6 Call Dispositions</h3>
+        <p>The outcome recorded against a call. <strong>Primary Key:</strong> disposition_id &nbsp; <strong>Foreign Keys:</strong> call_id</p>
+        <table class="objection-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>disposition_id</td><td>STRING</td><td>Unique identifier (required).</td></tr>
+            <tr><td>call_id</td><td>STRING</td><td>The call this outcome belongs to.</td></tr>
+            <tr><td>disposition_code</td><td>STRING</td><td>Controlled vocabulary, e.g. connected, voicemail, no_answer, wrong_number, dnc, meeting_booked.</td></tr>
+            <tr><td>notes</td><td>STRING</td><td>Free-text notes from the SDR.</td></tr>
+            <tr><td>dnc_flag</td><td>BOOLEAN</td><td>True if the contact should be suppressed going forward.</td></tr>
+          </tbody>
+        </table>
+        <p class="note">Best practice: this table is the trigger for the ReadyMode suppression loop — dnc_flag = true here should automatically add the contact to the export used to filter future upload files.</p>
+
+        <h3>3.7 Meetings</h3>
+        <p>A booked appointment resulting from outbound activity, and its ultimate outcome. <strong>Primary Key:</strong> meeting_id &nbsp; <strong>Foreign Keys:</strong> contact_id, disposition_id, user_id</p>
+        <table class="objection-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>meeting_id</td><td>STRING</td><td>Unique identifier (required).</td></tr>
+            <tr><td>contact_id</td><td>STRING</td><td>Who the meeting is with.</td></tr>
+            <tr><td>disposition_id</td><td>STRING</td><td>The call disposition that produced this meeting, if applicable.</td></tr>
+            <tr><td>user_id</td><td>STRING</td><td>SDR or account lead who booked/ran the meeting.</td></tr>
+            <tr><td>scheduled_at</td><td>TIMESTAMP</td><td>Meeting date/time.</td></tr>
+            <tr><td>outcome</td><td>STRING</td><td>quick_no or closed_deal per Earned Impact's current definition of a successful appointment.</td></tr>
+            <tr><td>ghl_opportunity_id</td><td>STRING</td><td>Linked GoHighLevel opportunity/pipeline record.</td></tr>
+          </tbody>
+        </table>
+        <p class="note">Best practice: keep outcome as a small controlled set now; the longer pipeline-stage list belongs in GoHighLevel, referenced here by ghl_opportunity_id.</p>
+
+        <h3>3.8 Users / SDRs</h3>
+        <p>Everyone who touches outbound activity. <strong>Primary Key:</strong> user_id</p>
+        <table class="objection-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>user_id</td><td>STRING</td><td>Unique identifier (required).</td></tr>
+            <tr><td>full_name</td><td>STRING</td><td>Display name.</td></tr>
+            <tr><td>role</td><td>STRING</td><td>SDR, account_lead, manager, etc.</td></tr>
+            <tr><td>team</td><td>STRING</td><td>Internal team or client pod, once multi-client.</td></tr>
+            <tr><td>active_flag</td><td>BOOLEAN</td><td>Whether this user is currently active — do not delete rows for departed staff.</td></tr>
+          </tbody>
+        </table>
+        <p class="note">Best practice: never hard-delete a user record — historical Calls and Meetings must keep resolving to a name for reporting integrity even after someone leaves.</p>
+
+        <h3>3.9 Email / LinkedIn Activity</h3>
+        <p>One row per outbound touch on the email or LinkedIn channel. <strong>Primary Key:</strong> activity_id &nbsp; <strong>Foreign Keys:</strong> contact_id, sequence_id</p>
+        <table class="objection-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>activity_id</td><td>STRING</td><td>Unique identifier (required).</td></tr>
+            <tr><td>contact_id</td><td>STRING</td><td>Who was touched.</td></tr>
+            <tr><td>sequence_id</td><td>STRING</td><td>Which sequence step generated this touch.</td></tr>
+            <tr><td>activity_type</td><td>STRING</td><td>email_sent, email_opened, email_replied, linkedin_connect, linkedin_message, etc.</td></tr>
+            <tr><td>activity_timestamp</td><td>TIMESTAMP</td><td>When it occurred.</td></tr>
+            <tr><td>status</td><td>STRING</td><td>sent, delivered, bounced, replied, failed.</td></tr>
+          </tbody>
+        </table>
+        <p class="note">Best practice: design this table now even though cold email/LinkedIn automation is not launching yet — adding it later after data has flowed to Calls and Meetings only is a much larger migration than including it in v1.</p>
+
+        <h3>3.10 Reporting Metrics</h3>
+        <p>Pre-aggregated, dashboard-ready performance numbers — the only table reporting tools should query directly. <strong>Primary Key:</strong> metric_id &nbsp; <strong>Foreign Keys:</strong> campaign_id, client_id</p>
+        <table class="objection-table">
+          <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>metric_id</td><td>STRING</td><td>Unique identifier (required).</td></tr>
+            <tr><td>campaign_id</td><td>STRING</td><td>Which campaign this row summarizes.</td></tr>
+            <tr><td>client_id</td><td>STRING</td><td>Owning client.</td></tr>
+            <tr><td>metric_date</td><td>DATE</td><td>The day (or period) this row represents.</td></tr>
+            <tr><td>dials</td><td>INTEGER</td><td>Total dials for the period.</td></tr>
+            <tr><td>connects</td><td>INTEGER</td><td>Total connected calls.</td></tr>
+            <tr><td>meetings_booked</td><td>INTEGER</td><td>Meetings resulting from the period.</td></tr>
+            <tr><td>dial_to_appointment_rate</td><td>FLOAT</td><td>Connects/dials and dials/meeting ratios per the ~1–2 per 400 dials benchmark.</td></tr>
+          </tbody>
+        </table>
+        <p class="note">Best practice: compute this table on a schedule (e.g. nightly) rather than having dashboards aggregate raw Calls/Meetings on the fly.</p>
+      </section>
+
+      <section>
+        <h2>4. Data Relationships</h2>
+        <p>Companies → Contacts is one-to-many; Contacts branch out into Calls, Email/LinkedIn Activity, and (via Campaigns) Sequences; Calls resolve into Call Dispositions, which in turn produce Meetings; and Reporting Metrics aggregates across Campaigns and Meetings. Users attach to both Calls and Meetings to preserve SDR-level attribution.</p>
+      </section>
+
+      <section>
+        <h2>5. Data Flow Architecture</h2>
+        <p><strong>Sourcing:</strong> Apollo, FullEnrich, and CSV/Sheets imports all write new or enriched Company and Contact records into BigQuery — none of them are queried directly by downstream systems.</p>
+        <p><strong>Calling loop:</strong> BigQuery pushes contact lists to ReadyMode IQ; ReadyMode returns call outcomes and dispositions, which land back in BigQuery.</p>
+        <p><strong>CRM loop:</strong> qualified contacts, booked meetings, and opportunities move from BigQuery into GoHighLevel; meeting outcomes and pipeline changes sync back into BigQuery.</p>
+        <p><strong>Reporting:</strong> dashboards and reports are generated only from BigQuery's Reporting Metrics table — never directly from ReadyMode or GoHighLevel exports. Gemini sits alongside the flow as an AI assist for enrichment and qualification, reading context from BigQuery without owning any data of its own.</p>
+      </section>
+
+      <section>
+        <h2>6. Source of Truth Matrix</h2>
+        <table class="objection-table">
+          <thead><tr><th>Data Type</th><th>System of Origin</th><th>Authoritative Home</th></tr></thead>
+          <tbody>
+            <tr><td>Contacts</td><td>Apollo / FullEnrich / CSV / manual</td><td>BigQuery</td></tr>
+            <tr><td>Companies</td><td>Apollo / FullEnrich / CSV / manual</td><td>BigQuery</td></tr>
+            <tr><td>Calls</td><td>ReadyMode IQ</td><td>BigQuery (synced from ReadyMode)</td></tr>
+            <tr><td>Call Dispositions</td><td>ReadyMode IQ (SDR-entered)</td><td>BigQuery (synced from ReadyMode)</td></tr>
+            <tr><td>Meetings</td><td>GoHighLevel (booked) / BigQuery (triggered)</td><td>BigQuery (synced bidirectionally)</td></tr>
+            <tr><td>Pipeline / Opportunities</td><td>GoHighLevel</td><td>GoHighLevel, referenced in BigQuery via ghl_opportunity_id</td></tr>
+            <tr><td>Reporting / KPIs</td><td>Computed</td><td>BigQuery only — never a downstream tool</td></tr>
+            <tr><td>Sequences / Templates</td><td>Internal team-authored</td><td>BigQuery (reference) + asset library (content)</td></tr>
+            <tr><td>Email Activity</td><td>Cold email platform (future)</td><td>BigQuery, once that channel is live (Section 8)</td></tr>
+            <tr><td>LinkedIn Activity</td><td>LinkedIn automation tool (future)</td><td>BigQuery, once that channel is live (Section 8)</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>7. Naming Convention</h2>
+        <p class="note">All names use snake_case; all identifiers are prefixed for readability in a multi-client warehouse.</p>
+        <table class="objection-table">
+          <thead><tr><th>Element</th><th>Convention</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Dataset</td><td>client_slug (one dataset per client, lowercase, underscores)</td><td>earned_impact, trichad</td></tr>
+            <tr><td>Table</td><td>snake_case, plural noun</td><td>contacts, call_dispositions</td></tr>
+            <tr><td>Column</td><td>snake_case, descriptive, no abbreviations beyond this doc's set</td><td>contact_status, scheduled_at</td></tr>
+            <tr><td>Primary Key</td><td>&lt;entity&gt;_id, STRING, generated at ingestion</td><td>contact_id, campaign_id</td></tr>
+            <tr><td>Foreign Key</td><td>Same name as the referenced table's primary key</td><td>company_id referenced in contacts</td></tr>
+            <tr><td>Timestamp</td><td>ISO 8601, UTC, suffix _at for instants / _date for calendar dates</td><td>created_at, metric_date</td></tr>
+            <tr><td>Status values</td><td>Lowercase snake_case, from a controlled vocabulary per field</td><td>in_sequence, meeting_booked, dnc</td></tr>
+            <tr><td>Disposition codes</td><td>Lowercase snake_case, fixed list maintained in this document</td><td>connected, voicemail, wrong_number</td></tr>
+            <tr><td>Campaign ID</td><td>&lt;client_slug&gt;-&lt;year&gt;-&lt;sequence&gt;, versioned on relaunch</td><td>ei-2026-01, ei-2026-01-v2</td></tr>
+            <tr><td>Client ID</td><td>Short lowercase slug, matches the dataset name</td><td>earned_impact</td></tr>
+          </tbody>
+        </table>
+        <p class="note">Any new field, table, or status value proposed outside this list should be added here first, then implemented — this document is the control, not an after-the-fact description.</p>
+      </section>
+
+      <section>
+        <h2>8. Future Expansion</h2>
+        <p class="note">Acknowledged as directional next steps. None are architected in this version — named here only so v1 design choices (Sections 3, 7) don't accidentally foreclose them.</p>
+        <ul class="tight">
+          <li><strong>Cold Email platform integration</strong> — will extend the existing Email Activity table rather than requiring a new one.</li>
+          <li><strong>LinkedIn Automation tooling</strong> — will extend the existing LinkedIn Activity rows already scoped in Section 3.9.</li>
+          <li><strong>AI Agents</strong> — for qualification, enrichment, or first-touch outreach, layered on top of BigQuery as consumers, not new sources of truth.</li>
+          <li><strong>SMS Automation</strong> — a new channel, following the same Sequences/Activity pattern used for email and LinkedIn.</li>
+          <li><strong>Multi-client deployments</strong> — dataset-per-client structure (Section 7) is designed for this; TriChad is the next planned instance.</li>
+          <li><strong>Revenue Attribution</strong> — connecting closed-deal revenue back through Meetings → Calls → original source, once client billing data is available in the warehouse.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Next Steps</h2>
+        <p>Recommend engineering review of Sections 3 and 7 before first implementation, confirmation of the ReadyMode and GoHighLevel sync mechanisms (API vs. scheduled export) with the current tool licenses, and a short validation pass once Earned Impact's own outbound data starts flowing, before this spec is finalized as the standard template for TriChad and future clients.</p>
+      </section>
+    </div>
+
+    <p class="footer-note">Source: BigQuery Data Warehouse Specification — v1 · Internal Engineering Specification, Not Client-Facing</p>
+  </div>
+</body>
