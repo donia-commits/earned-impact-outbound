@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outbound Launch Status — Earned Impact (DRAFT)</title>
+<style>
+  :root{
+    --ink:#0B0B0C;
+    --ink-soft:#3A3A3D;
+    --muted:#7A7A7E;
+    --line:#E7E4DD;
+    --paper:#FFFFFF;
+    --tint:#FAFAF8;
+    --orange:#F0501F;
+    --orange-deep:#C93E15;
+    --orange-tint:#FDEAE3;
+
+    --green:#16A34A;      --green-soft:#E8F7EE;
+    --amber:#EA580C;      --amber-soft:#FDEEE3;
+    --red:#DC2626;        --red-soft:#FCEAEA;
+    --gray:#8A8D93;       --gray-soft:#F0F1F2;
+    --done:#9CA0A6;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.5;
+  }
+  a{color:inherit;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 40px;}
+  @media (max-width:720px){ .wrap{padding:0 20px;} }
+
+  /* ===== HERO ===== */
+  header.hero{
+    background:var(--ink);color:#fff;position:relative;overflow:hidden;
+    padding:40px 0 40px;
+  }
+  header.hero::after{
+    content:"";position:absolute;top:-120px;right:-160px;width:420px;height:420px;
+    background:radial-gradient(circle at 30% 30%, var(--orange), var(--orange-deep) 70%);
+    border-radius:50%;opacity:.9;
+  }
+  .back-to-dashboard{
+    display:inline-block;position:relative;z-index:2;margin-bottom:22px;
+    font:600 13px/1.2 "Inter",sans-serif;color:#fff;text-decoration:none;
+    border:1px solid rgba(255,255,255,.3);padding:8px 14px;border-radius:6px;
+  }
+  .back-to-dashboard:hover{border-color:var(--orange);}
+  .draft-badge{
+    position:relative;z-index:2;display:inline-flex;align-items:center;gap:8px;
+    font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+    color:#fff;background:var(--orange);padding:6px 12px;border-radius:100px;margin-bottom:18px;
+  }
+  h1.title{
+    position:relative;z-index:2;font-size:clamp(28px,4vw,42px);font-weight:800;
+    letter-spacing:-.02em;margin:0 0 12px;max-width:780px;
+  }
+  p.subtitle{position:relative;z-index:2;font-size:16px;color:#C7C7CC;max-width:640px;margin:0 0 24px;}
+  .meta-row{position:relative;z-index:2;display:flex;flex-wrap:wrap;gap:26px;padding-top:20px;border-top:1px solid rgba(255,255,255,.14);}
+  .meta-item{font-size:12px;color:#9C9CA1;}
+  .meta-item b{display:block;color:#fff;font-size:13px;font-weight:600;margin-top:2px;}
+
+  /* ===== LEGEND ===== */
+  .legend-bar{
+    background:var(--tint);border-bottom:1px solid var(--line);
+    padding:18px 0;
+  }
+  .legend-list{display:flex;flex-wrap:wrap;gap:22px;align-items:center;}
+  .legend-chip{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--ink-soft);}
+  .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .legend-chip.done{color:var(--done);text-decoration:line-through;text-decoration-thickness:1.5px;}
+
+  /* ===== SOURCES NOTE ===== */
+  .sources-note{
+    background:var(--orange-tint);border:1px solid #F6D9CB;border-radius:12px;
+    padding:16px 20px;font-size:13px;color:var(--orange-deep);margin:28px 0 6px;
+  }
+  .sources-note b{font-weight:700;}
+
+  /* ===== PHASE SECTIONS ===== */
+  section.phase{padding:44px 0;}
+  section.phase + section.phase{border-top:1px solid var(--line);}
+  .phase-head{display:flex;gap:18px;align-items:flex-start;margin-bottom:22px;}
+  .phase-num{
+    flex-shrink:0;width:52px;height:52px;border-radius:12px;background:var(--orange);
+    color:#fff;font-weight:800;font-size:20px;display:flex;align-items:center;justify-content:center;
+  }
+  .phase-titlewrap h2{margin:0 0 4px;font-size:22px;font-weight:800;letter-spacing:-.01em;}
+  .phase-titlewrap p{margin:0;font-size:13.5px;color:var(--muted);max-width:600px;}
+  .phase-status{
+    margin-left:auto;flex-shrink:0;align-self:center;
+    font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+    padding:6px 12px;border-radius:100px;white-space:nowrap;
+  }
+
+  .node-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
+  .node{
+    background:var(--paper);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;position:relative;border-left:4px solid var(--gray);
+  }
+  .node .node-title{font-size:14.5px;font-weight:700;margin-bottom:6px;display:block;}
+  .node .node-note{font-size:12.5px;color:var(--ink-soft);}
+  .node .node-link{
+    display:inline-flex;align-items:center;gap:5px;margin-top:10px;font-size:12px;font-weight:700;
+    color:var(--orange-deep);text-decoration:none;
+  }
+  .node .node-link:hover{text-decoration:underline;}
+  .node .status-tag{
+    display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+    padding:3px 8px;border-radius:100px;margin-bottom:8px;
+  }
+
+  .node.st-done{border-left-color:var(--done); background:var(--tint);}
+  .node.st-done .node-title{color:var(--done);text-decoration:line-through;text-decoration-thickness:1.5px;}
+  .node.st-done .status-tag{background:var(--gray-soft);color:var(--done);}
+
+  .node.st-green{border-left-color:var(--green);}
+  .node.st-green .status-tag{background:var(--green-soft);color:var(--green);}
+
+  .node.st-amber{border-left-color:var(--amber);}
+  .node.st-amber .status-tag{background:var(--amber-soft);color:var(--amber);}
+
+  .node.st-red{border-left-color:var(--red);}
+  .node.st-red .status-tag{background:var(--red-soft);color:var(--red);}
+
+  .node.st-gray{border-left-color:var(--gray);}
+  .node.st-gray .status-tag{background:var(--gray-soft);color:var(--gray);}
+
+  /* ===== KEY DATES / RISKS ===== */
+  section#dates-risks{background:var(--ink);color:#fff;padding:50px 0;}
+  section#dates-risks h2{font-size:22px;font-weight:800;margin:0 0 6px;}
+  section#dates-risks > .wrap > p.lead{color:#B9B6AF;font-size:13.5px;max-width:620px;margin:0 0 28px;}
+  .dr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;}
+  .dr-card{
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:12px;
+    padding:16px 18px;
+  }
+  .dr-card .dr-tag{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#F5B79E;margin-bottom:6px;display:block;}
+  .dr-card .dr-title{font-weight:700;font-size:14px;margin-bottom:4px;}
+  .dr-card .dr-note{font-size:12.5px;color:#C7C7CC;}
+
+  footer.page-footer{padding:30px 0 60px;font-size:12px;color:var(--muted);}
+  footer.page-footer a{color:var(--orange-deep);font-weight:700;text-decoration:none;}
+  footer.page-footer a:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <a class="back-to-dashboard" href="../index.html">← Back to Dashboard</a>
+    <div class="draft-badge">Draft — Internal Review Only, Not Client-Facing</div>
+    <h1 class="title">Outbound Launch Status</h1>
+    <p class="subtitle">Every step required to launch Earned Impact's own cold-calling outbound system, mapped against the 5-phase Outbound Launch Framework, and where each one currently stands.</p>
+    <div class="meta-row">
+      <div class="meta-item">Prepared for<b>Damon Stewart &amp; Kaelene Spence</b></div>
+      <div class="meta-item">As of<b>August 4, 2026</b></div>
+      <div class="meta-item">Launch commitment<b>August 3, 2026</b></div>
+      <div class="meta-item">Trial ends<b>~September 14, 2026</b></div>
+    </div>
+  </div>
+</header>
+
+<div class="legend-bar">
+  <div class="wrap legend-list">
+    <span class="legend-chip done">Completed</span>
+    <span class="legend-chip"><i class="legend-dot" style="background:var(--green);"></i>In Progress — No Blockers</span>
+    <span class="legend-chip"><i class="legend-dot" style="background:var(--amber);"></i>In Progress — Blocked</span>
+    <span class="legend-chip"><i class="legend-dot" style="background:var(--red);"></i>Blocked</span>
+    <span class="legend-chip"><i class="legend-dot" style="background:var(--gray);"></i>Not Started</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="sources-note">
+    <b>How this was built:</b> statuses below come from documents in this repository — Current Stack Audit v3 (Jul 27), Executive Account Summary v1 (Jul 27), Discovery Summary v3, ICP v4, Offer Strategy v2, Messaging Framework v1 (Jul 30), the BigQuery Data Warehouse Specification v1 (Aug 3), the Master Outbound Script Package v2, and the GHL/ReadyMode workflow documents. <b>This session has no access to Productive.io</b>, so task-level detail and anything that changed after Aug 3 isn't reflected — please correct anything below that's stale before this is treated as accurate.
+  </div>
+</div>
+
+<!-- ================= PHASE 1 ================= -->
+<section class="phase">
+  <div class="wrap">
+    <div class="phase-head">
+      <div class="phase-num">01</div>
+      <div class="phase-titlewrap">
+        <h2>Discovery &amp; Strategy</h2>
+        <p>Understand the business, define the ideal customer, offer, and positioning. Audit the current environment to build a strong foundation.</p>
+      </div>
+      <span class="phase-status" style="background:var(--green-soft);color:var(--green);">In Progress — No Blockers</span>
+    </div>
+    <div class="node-grid">
+      <div class="node st-done">
+        <span class="status-tag">Completed</span>
+        <span class="node-title">Define ICP</span>
+        <div class="node-note">Doc 2 · v4 — three segments (Higher-Ed, Mental Health, Trade), shared disqualifiers and fit tiering.</div>
+        <a class="node-link" href="02_ICP_v4.html">Open ICP →</a>
+      </div>
+      <div class="node st-done">
+        <span class="status-tag">Completed</span>
+        <span class="node-title">Define Value Proposition &amp; Offer</span>
+        <div class="node-note">Doc 4 · v2 — primary offer, competitive advantage, segment messaging.</div>
+        <a class="node-link" href="Deliverable_04_Offer_Strategy.html">Open Offer Strategy →</a>
+      </div>
+      <div class="node st-done">
+        <span class="status-tag">Completed</span>
+        <span class="node-title">Gather Assets &amp; Client Information</span>
+        <div class="node-note">Doc 1 · v3 Discovery Summary, plus the Discovery Questionnaire form &amp; responses.</div>
+        <a class="node-link" href="Discovery_Summary_EarnedImpact_v3.html">Open Discovery Summary →</a>
+      </div>
+      <div class="node st-done">
+        <span class="status-tag">Completed</span>
+        <span class="node-title">Audit Existing Sales &amp; Outbound Stack</span>
+        <div class="node-note">Doc 2 · v3 Current Stack Audit — CRM/dialer decided, 4 open gaps flagged. Not yet published as a dashboard page.</div>
+      </div>
+      <div class="node st-amber">
+        <span class="status-tag">In Progress — Blocked</span>
+        <span class="node-title">Campaign Strategy &amp; Targeting Plan</span>
+        <div class="node-note">ICP and Offer Strategy are locked, but named competitors, an account-level success metric, and the Trade-segment benchmark are still open per ICP v4's Action Items — a dedicated Outbound Strategy / Targeting Plan doc wasn't found in the repo.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PHASE 2 ================= -->
+<section class="phase">
+  <div class="wrap">
+    <div class="phase-head">
+      <div class="phase-num">02</div>
+      <div class="phase-titlewrap">
+        <h2>Infrastructure Build</h2>
+        <p>Build and configure the infrastructure, tools, and data systems needed to run outbound at scale.</p>
+      </div>
+      <span class="phase-status" style="background:var(--red-soft);color:var(--red);">Blocked</span>
+    </div>
+    <div class="node-grid">
+      <div class="node st-done">
+        <span class="status-tag">Completed</span>
+        <span class="node-title">Finalize Technology Stack (decision)</span>
+        <div class="node-note">Current Stack Audit: "Platform decisions are set — CRM = GoHighLevel, Dialer = Ready Mode, Calendar moving to GHL."</div>
+      </div>
+      <div class="node st-red">
+        <span class="status-tag">Blocked</span>
+        <span class="node-title">Configure CRM &amp; Pipeline</span>
+        <div class="node-note">GoHighLevel: "Selected — Pending." The CRM workflow design is done; the live platform isn't configured yet. Owner: Donia. Blocking Phase 2 per the Executive Account Summary.</div>
+        <a class="node-link" href="ghl-workflow.html">Open GHL Workflow design →</a>
+      </div>
+      <div class="node st-red">
+        <span class="status-tag">Blocked</span>
+        <span class="node-title">Configure Dialer &amp; Calling Workflow</span>
+        <div class="node-note">Ready Mode: "Selected — Pending" purchase &amp; setup. The dialer workflow design is done; the tool itself isn't purchased/configured. Owner: Donia. Blocking Phase 2.</div>
+        <a class="node-link" href="readymode-workflow.html">Open Cold Calling Workflow design →</a>
+      </div>
+      <div class="node st-green">
+        <span class="status-tag">In Progress — No Blockers</span>
+        <span class="node-title">Design Lead &amp; Data Flow</span>
+        <div class="node-note">BigQuery Data Warehouse Specification v1 (Aug 3) — full schema, source-of-truth matrix, and data flow are written; status is "pending engineering review," no blocker stated.</div>
+        <a class="node-link" href="BigQuery_Data_Warehouse_Specification_v1.html">Open BigQuery Spec →</a>
+      </div>
+      <div class="node st-gray">
+        <span class="status-tag">Not Started</span>
+        <span class="node-title">Build Reporting &amp; KPI Dashboard</span>
+        <div class="node-note">Current Stack Audit lists this explicitly as a Gap: "Not built."</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PHASE 3 ================= -->
+<section class="phase">
+  <div class="wrap">
+    <div class="phase-head">
+      <div class="phase-num">03</div>
+      <div class="phase-titlewrap">
+        <h2>Campaign Build</h2>
+        <p>Create the messaging, sequences, and assets. Prepare lists, train SDRs, and ensure quality before launch.</p>
+      </div>
+      <span class="phase-status" style="background:var(--amber-soft);color:var(--amber);">In Progress — Blocked</span>
+    </div>
+    <div class="node-grid">
+      <div class="node st-done">
+        <span class="status-tag">Completed</span>
+        <span class="node-title">Develop Messaging &amp; Outreach Assets</span>
+        <div class="node-note">Cold-call assets: Master Outbound Script Package v2 (full script + objection handling + change log). Built on the Messaging Framework v1 (Jul 30) source-of-truth doc — that doc exists but has no dashboard page yet. Email/LinkedIn/SMS are explicitly deferred post-launch per the Stack Audit.</div>
+        <a class="node-link" href="Master_Outbound_Script_Package.html">Open Script Package →</a>
+      </div>
+      <div class="node st-gray">
+        <span class="status-tag">Not Started</span>
+        <span class="node-title">Build Sequences &amp; Cadences</span>
+        <div class="node-note">The BigQuery spec defines a Sequences table to hold cadence data, but no authored cadence/sequence document was found.</div>
+      </div>
+      <div class="node st-amber">
+        <span class="status-tag">In Progress — Blocked</span>
+        <span class="node-title">Build &amp; Clean Target Lists</span>
+        <div class="node-note">ICP criteria exist, but the Trade-segment benchmark and ICSW segment mapping are still unresolved (ICP v4 Action Items) — both feed directly into list-building.</div>
+        <a class="node-link" href="02_ICP_v4.html">Open ICP →</a>
+      </div>
+      <div class="node st-red">
+        <span class="status-tag">Blocked</span>
+        <span class="node-title">SDR Training &amp; QA Process</span>
+        <div class="node-note">Current Stack Audit flags this as the single highest risk: "no formal knowledge base — scripts/objections exist only in Sarah's informal training of Cooper." No owner assigned yet.</div>
+      </div>
+      <div class="node st-gray">
+        <span class="status-tag">Not Started</span>
+        <span class="node-title">Pre-Launch Checklist &amp; Testing</span>
+        <div class="node-note">No pre-launch checklist document found in the repo.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PHASE 4 ================= -->
+<section class="phase">
+  <div class="wrap">
+    <div class="phase-head">
+      <div class="phase-num">04</div>
+      <div class="phase-titlewrap">
+        <h2>Launch &amp; Validation</h2>
+        <p>Launch the campaign, drive activity, book meetings, and validate results based on real data.</p>
+      </div>
+      <span class="phase-status" style="background:var(--gray-soft);color:var(--gray);">Not Started</span>
+    </div>
+    <div class="node-grid">
+      <div class="node st-gray">
+        <span class="status-tag">Not Started</span>
+        <span class="node-title">Launch Outbound Campaign</span>
+        <div class="node-note">Target was August 3, 2026 — that date has now passed with Phase 2 still blocked (CRM/dialer not configured), so this needs a direct status confirmation from Damon/Kaelene rather than an inference from documents.</div>
+      </div>
+      <div class="node st-gray">
+        <span class="status-tag">Not Started</span>
+        <span class="node-title">Deliver First Qualified Meetings</span>
+        <div class="node-note">Depends on campaign launch above.</div>
+      </div>
+      <div class="node st-gray">
+        <span class="status-tag">Not Started</span>
+        <span class="node-title">Monitor KPIs &amp; Performance</span>
+        <div class="node-note">Depends on the Reporting &amp; KPI Dashboard (Phase 2), which isn't built.</div>
+      </div>
+      <div class="node st-gray">
+        <span class="status-tag">Not Started</span>
+        <span class="node-title">Analyze Results &amp; Gather Insights</span>
+        <div class="node-note">Depends on campaign activity data not yet generated.</div>
+      </div>
+      <div class="node st-gray">
+        <span class="status-tag">Not Started</span>
+        <span class="node-title">Optimize Messaging, Targeting, Workflows</span>
+        <div class="node-note">Depends on live campaign results.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PHASE 5 ================= -->
+<section class="phase">
+  <div class="wrap">
+    <div class="phase-head">
+      <div class="phase-num">05</div>
+      <div class="phase-titlewrap">
+        <h2>Scale &amp; Handover</h2>
+        <p>Document everything, optimize the system, and prepare for scale and ongoing client success.</p>
+      </div>
+      <span class="phase-status" style="background:var(--gray-soft);color:var(--gray);">Not Started</span>
+    </div>
+    <div class="node-grid">
+      <div class="node st-gray">
+        <span class="status-tag">Not Started</span>
+        <span class="node-title">Document SOPs &amp; Playbook</span>
+        <div class="node-note">Applies once Earned Impact's own campaign is validated, per the Executive Account Summary.</div>
+      </div>
+      <div class="node st-green">
+        <span class="status-tag">In Progress — No Blockers</span>
+        <span class="node-title">Create Replicable Framework</span>
+        <div class="node-note">Groundwork already exists: the BigQuery spec, the GHL and ReadyMode workflow docs, and the Script Package are all explicitly written as reusable templates for the next client (e.g. TriChad), ahead of formal Phase 5 start.</div>
+        <a class="node-link" href="BigQuery_Data_Warehouse_Specification_v1.html">Open BigQuery Spec →</a>
+      </div>
+      <div class="node st-gray">
+        <span class="status-tag">Not Started</span>
+        <span class="node-title">Client Review &amp; Handoff</span>
+        <div class="node-note">Not applicable until Earned Impact's own campaign validates.</div>
+      </div>
+      <div class="node st-gray">
+        <span class="status-tag">Not Started</span>
+        <span class="node-title">Expansion Roadmap &amp; Growth Plan</span>
+        <div class="node-note">Not started.</div>
+      </div>
+      <div class="node st-gray">
+        <span class="status-tag">Not Started</span>
+        <span class="node-title">Continuous Optimization Plan</span>
+        <div class="node-note">Not started.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= KEY DATES & RISKS ================= -->
+<section id="dates-risks">
+  <div class="wrap">
+    <h2>Key Dates &amp; Risks</h2>
+    <p class="lead">From the Executive Account Summary (Jul 27) — the trial and engagement terms sitting underneath the launch framework above.</p>
+    <div class="dr-grid">
+      <div class="dr-card">
+        <span class="dr-tag">Date · Passed</span>
+        <div class="dr-title">Aug 3, 2026 — Double Milestone</div>
+        <div class="dr-note">Campaign launch commitment and the 60-day trial's two-week role/KPI review were scheduled for the same day. The Summary itself recommends splitting these — worth confirming whether that happened.</div>
+      </div>
+      <div class="dr-card">
+        <span class="dr-tag">Date · Upcoming</span>
+        <div class="dr-title">~Sep 14, 2026 — Trial Ends</div>
+        <div class="dr-note">60 days from signing (Jul 16). Post-trial termination reverts to 14 days' notice for convenience; during the trial it's 7 days, either party.</div>
+      </div>
+      <div class="dr-card">
+        <span class="dr-tag">Risk</span>
+        <div class="dr-title">Single-Person Dependency</div>
+        <div class="dr-note">Donia is the only outbound delivery resource, with no bench — no backup if the trial ends or bandwidth is exceeded.</div>
+      </div>
+      <div class="dr-card">
+        <span class="dr-tag">Risk</span>
+        <div class="dr-title">No Formal Knowledge Base</div>
+        <div class="dr-note">Flagged as the highest risk in the Current Stack Audit — scripts and objection handling exist only in informal training, undocumented outside the Script Package.</div>
+      </div>
+      <div class="dr-card">
+        <span class="dr-tag">Compensation</span>
+        <div class="dr-title">Rate Steps Up on Dialer Go-Live</div>
+        <div class="dr-note">$1,700 → $1,750/month plus incentive (TBD) once the dialer motion is actually live — tied directly to Phase 2 completion.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <footer class="page-footer">
+    Draft for internal review — Earned Impact Outbound Operating System. Not for client distribution. <a href="../index.html">← Back to Dashboard</a>
+  </footer>
+</div>
+
+</body>
+</html>
