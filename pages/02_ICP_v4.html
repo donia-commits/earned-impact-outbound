@@ -1,126 +1,244 @@
-<title>Ideal Customer Profile — Earned Impact</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="../css/styles.css">
-
+<title>Ideal Customer Profile (ICP) — Earned Impact</title>
+<style>
+  :root{
+    --orange:#E8541E;
+    --black:#111111;
+    --gray:#555555;
+    --lightgray:#F2F2F2;
+    --lightorange:#FCE7DD;
+    --border:#D9D9D9;
+    --high:#FBD5CD;
+  }
+  *{box-sizing:border-box;}
+  body{
+    font-family:"Calibri","Segoe UI",Arial,sans-serif;
+    color:var(--black);
+    max-width:900px;
+    margin:0 auto;
+    padding:32px 40px 60px;
+    background:#fff;
+    font-size:15px;
+    line-height:1.5;
+  }
+  .topbar{
+    border-bottom:2px solid var(--orange);
+    padding-bottom:8px;
+    margin-bottom:20px;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.02em;
+    color:var(--gray);
+    text-transform:uppercase;
+  }
+  .deliverable-tag{
+    color:var(--orange);
+    font-weight:700;
+    font-size:14px;
+    margin-bottom:4px;
+  }
+  h1{
+    font-size:30px;
+    margin:0 0 10px;
+  }
+  .purpose{
+    font-style:italic;
+    color:var(--gray);
+    font-size:13.5px;
+    margin-bottom:20px;
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:26px;
+    font-size:14px;
+  }
+  td, th{
+    border:1px solid var(--border);
+    padding:8px 12px;
+    vertical-align:top;
+    text-align:left;
+  }
+  .info-table td:first-child,
+  .fact-table td:first-child,
+  .geo-table td:first-child{
+    background:var(--lightgray);
+    font-weight:700;
+    width:180px;
+  }
+  h2{
+    font-size:19px;
+    margin:34px 0 12px;
+    padding-bottom:6px;
+    border-bottom:2px solid var(--orange);
+  }
+  ul{
+    margin:0 0 20px;
+    padding-left:22px;
+  }
+  li{ margin-bottom:6px; }
+  .exec-summary li{ margin-bottom:10px; }
+  .seg-table th{
+    background:var(--black);
+    color:#fff;
+    font-weight:700;
+  }
+  .seg-table td:first-child{
+    background:var(--lightgray);
+    font-weight:700;
+    width:130px;
+  }
+  .tier-table th{
+    background:var(--black);
+    color:#fff;
+  }
+  .tier1 td{ background:var(--lightorange); }
+  .tier1 td:first-child{ font-weight:700; }
+  .tier3 td{ background:var(--lightgray); }
+  .tier3 td:first-child{ font-weight:700; }
+  .tier2 td:first-child{ font-weight:700; }
+  .action-table th{
+    background:var(--black);
+    color:#fff;
+  }
+  .priority-high{ background:var(--high); font-weight:700; }
+  .priority-medium{ background:var(--lightorange); font-weight:700; }
+  .priority-low{ background:var(--lightgray); font-weight:700; }
+  footer{
+    margin-top:40px;
+    padding-top:10px;
+    border-top:1px solid var(--border);
+    font-size:12px;
+    color:var(--gray);
+  }
+</style>
+</head>
 <body>
-  <div class="wrap">
-    <div class="page-header">
-      <div>
-        <p class="eyebrow">Earned Impact · Deliverable 02 · v4</p>
-        <h1>Ideal Customer Profile (ICP)</h1>
-      </div>
-      <a class="back-link" href="../index.html">← Back to Dashboard</a>
-    </div>
+  <a href="../index.html" style="display:inline-block;margin-bottom:20px;font:600 13px/1.2 Calibri,'Segoe UI',Arial,sans-serif;color:var(--orange);text-decoration:none;border:1px solid var(--orange);padding:8px 14px;border-radius:6px;">← Back to Dashboard</a>
 
-    <div class="content-card">
-      <p class="kicker">Purpose: defines who Earned Impact sells to. Used by every downstream document that targets, scripts, or messages a segment.</p>
 
-      <section>
-        <h2>Executive Summary</h2>
-        <ul class="tight">
-          <li>Where we are: three ICP segments defined — Higher-Ed, Mental Health, Trade/Membership — sharing one buyer persona, one disqualifier set, one fit-tiering model.</li>
-          <li>What remains: 4 open items (see Action Items) — one segment benchmark (Trade), one case-study mapping, Canada Phase 2 scope, one competitor list.</li>
-          <li>Next document: Offer Strategy — builds segment messaging directly from the pain points and proof points below.</li>
-        </ul>
-      </section>
+  <div class="topbar">Earned Impact &nbsp;|&nbsp; Outbound Operating System &nbsp;|&nbsp; Doc 2 of 18</div>
 
-      <section>
-        <h2>1. ICP Facts (Shared Across Segments)</h2>
-        <table class="objection-table">
-          <tbody>
-            <tr><td>Org Budget</td><td>$1M – $50M annual</td></tr>
-            <tr><td>Org Types</td><td>Higher-Ed &nbsp;•&nbsp; Mental Health Nonprofits &nbsp;•&nbsp; Trade / Membership Orgs</td></tr>
-            <tr><td>Buyer</td><td>Executive Director, President, or other director-level role with budget authority over marketing spend</td></tr>
-            <tr><td>Buyer Motivation</td><td>Grow unrestricted revenue to fund mission and retain staff; reduce dependency on restricted grants/donations</td></tr>
-            <tr><td>Common Objections</td><td>"Not budgeted this fiscal year" &nbsp;•&nbsp; Staffing/bandwidth concern</td></tr>
-            <tr><td>Geography — Now</td><td>United States</td></tr>
-            <tr><td>Geography — Next</td><td>Canada (Phase 2, timeline unconfirmed)</td></tr>
-          </tbody>
-        </table>
-      </section>
+  <div class="deliverable-tag">DELIVERABLE 02 &middot; v4</div>
+  <h1>Ideal Customer Profile (ICP)</h1>
+  <div class="purpose">Purpose: Defines who Earned Impact sells to. Used by every downstream document that targets, scripts, or messages a segment.</div>
 
-      <section>
-        <h2>2. Segment Comparison</h2>
-        <table class="objection-table">
-          <thead><tr><th></th><th>Higher-Ed</th><th>Mental Health</th><th>Trade / Membership</th></tr></thead>
-          <tbody>
-            <tr>
-              <td><strong>Definition</strong></td>
-              <td>Micro-university, &lt;2,000 students, 2–20 staff, strong financials</td>
-              <td>Mental health therapy nonprofit; $1M–$50M budget, ≤20 staff, limited in-house marketing capacity</td>
-              <td>Trade/membership org (segment benchmark not yet set)</td>
-            </tr>
-            <tr>
-              <td><strong>Pain Point</strong></td>
-              <td>Enrollment pipeline not full</td>
-              <td>Appointment volume below clinical capacity</td>
-              <td>Member volume/engagement below target</td>
-            </tr>
-            <tr>
-              <td><strong>Proof Point</strong></td>
-              <td>ICSW — filled enrollment cohort after 5+ yrs (segment mapping unconfirmed)</td>
-              <td>Chicago Psychoanalytic Institute — earned-income strategy (Google Ads, SEO, landing pages, CRO) removed single-donor deficit risk; 10x appointment revenue in &lt;1 yr</td>
-              <td>AMWA — YoY member-retention increase (in progress)</td>
-            </tr>
-            <tr>
-              <td><strong>Fit Signal</strong></td>
-              <td>Small, capitalized, active enrollment target</td>
-              <td>Open clinical capacity, budget to fill it, needs external marketing partner</td>
-              <td>Recurring membership model, visible growth/retention gap</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
+  <table class="info-table">
+    <tr><td>Client</td><td>Earned Impact</td></tr>
+    <tr><td>Prepared For</td><td>Damon Stewart, Managing Partner</td></tr>
+    <tr><td>Prepared By</td><td>Outbound Operations</td></tr>
+    <tr><td>Date</td><td>July 27, 2026</td></tr>
+    <tr><td>Status</td><td>v4 — Mental Health segment benchmark confirmed with Kaelene</td></tr>
+  </table>
 
-      <section>
-        <h2>3. Disqualifiers</h2>
-        <p class="note">Any one of the following disqualifies a record — suppress rather than dial:</p>
-        <ul class="tight">
-          <li>No active marketing budget</li>
-          <li>No program/service/membership infrastructure to monetize</li>
-          <li>Outside the $1M–$50M budget band</li>
-          <li>Outside the three org types, or outside current US scope</li>
-        </ul>
-      </section>
+  <h2>Executive Summary</h2>
+  <ul class="exec-summary">
+    <li><strong>Where we are:</strong> Three ICP segments defined — Higher-Ed, Mental Health, Trade/Membership — sharing one buyer persona, one disqualifier set, one fit-tiering model.</li>
+    <li><strong>What remains:</strong> 4 open items (Action Items, below) — one segment benchmark (Trade), one case-study mapping, Canada Phase 2 scope, one competitor list.</li>
+    <li><strong>Next document:</strong> Offer Strategy — builds segment messaging directly from the pain points and proof points below.</li>
+  </ul>
 
-      <section>
-        <h2>4. Fit Tiering (Recommendation)</h2>
-        <table class="objection-table">
-          <thead><tr><th>Tier</th><th>Criteria</th><th>Action</th></tr></thead>
-          <tbody>
-            <tr><td>Tier 1</td><td>Org type + budget + confirmed pain point + capacity to fill + US-based</td><td>Priority dial</td></tr>
-            <tr><td>Tier 2</td><td>Org type + budget match; pain point/capacity unconfirmed</td><td>Discovery-first script</td></tr>
-            <tr><td>Tier 3</td><td>Fails any disqualifier (Section 3)</td><td>Suppress</td></tr>
-          </tbody>
-        </table>
-      </section>
+  <h2>1. ICP Facts (Shared Across Segments)</h2>
+  <table class="fact-table">
+    <tr><td>Org Budget</td><td>$1M – $50M annual</td></tr>
+    <tr><td>Org Types</td><td>Higher-Ed &bull; Mental Health Nonprofits &bull; Trade / Membership Orgs</td></tr>
+    <tr><td>Buyer</td><td>Executive Director, President, or other director-level role with budget authority over marketing spend</td></tr>
+    <tr><td>Buyer Motivation</td><td>Grow unrestricted revenue to fund mission and retain staff; reduce dependency on restricted grants/donations</td></tr>
+    <tr><td>Common Objections</td><td>&ldquo;Not budgeted this fiscal year&rdquo; &bull; Staffing/bandwidth concern</td></tr>
+    <tr><td>Geography — Now</td><td>United States</td></tr>
+    <tr><td>Geography — Next</td><td>Canada (Phase 2, timeline unconfirmed)</td></tr>
+  </table>
 
-      <section>
-        <h2>5. Geographic Scope</h2>
-        <table class="objection-table">
-          <tbody>
-            <tr><td>Phase 1 (Now)</td><td>United States, nationwide</td></tr>
-            <tr><td>Phase 2 (Next)</td><td>Canada — timeline, provinces, and compliance review not yet defined</td></tr>
-          </tbody>
-        </table>
-      </section>
+  <h2>2. Segment Comparison</h2>
+  <table class="seg-table">
+    <tr>
+      <th></th>
+      <th>Higher-Ed</th>
+      <th>Mental Health</th>
+      <th>Trade / Membership</th>
+    </tr>
+    <tr>
+      <td>Definition</td>
+      <td>Micro-university, &lt;2,000 students, 2–20 staff, strong financials</td>
+      <td>Mental health therapy nonprofit; $1M–$50M budget, &le;20 staff, limited in-house marketing capacity</td>
+      <td>Trade/membership org (segment benchmark not yet set)</td>
+    </tr>
+    <tr>
+      <td>Pain Point</td>
+      <td>Enrollment pipeline not full</td>
+      <td>Appointment volume below clinical capacity</td>
+      <td>Member volume/engagement below target</td>
+    </tr>
+    <tr>
+      <td>Proof Point</td>
+      <td>ICSW — filled enrollment cohort after 5+ yrs (segment mapping unconfirmed)</td>
+      <td>Chicago Psychoanalytic Institute — earned-income strategy (Google Ads, SEO, landing pages, CRO) removed single-donor deficit risk; 10x appointment revenue in &lt;1 yr</td>
+      <td>AMWA — YoY member-retention increase (in progress)</td>
+    </tr>
+    <tr>
+      <td>Fit Signal</td>
+      <td>Small, capitalized, active enrollment target</td>
+      <td>Open clinical capacity, budget to fill it, needs external marketing partner</td>
+      <td>Recurring membership model, visible growth/retention gap</td>
+    </tr>
+  </table>
 
-      <section>
-        <h2>6. Action Items</h2>
-        <table class="objection-table">
-          <thead><tr><th>Action Item</th><th>Owner</th><th>Priority</th><th>Feeds</th></tr></thead>
-          <tbody>
-            <tr><td>Confirm one benchmark reference account for Trade segment (Mental Health resolved — CPI)</td><td>Kaelene</td><td>High</td><td>Messaging Framework</td></tr>
-            <tr><td>Confirm ICSW segment mapping (Higher-Ed vs. Trade)</td><td>Kaelene</td><td>Medium</td><td>This document</td></tr>
-            <tr><td>Define Canada Phase 2 timeline and compliance scope</td><td>Damon</td><td>Low</td><td>Outbound Strategy</td></tr>
-            <tr><td>Document named competitors for messaging contrast</td><td>Kaelene</td><td>Medium</td><td>Messaging Framework</td></tr>
-          </tbody>
-        </table>
-      </section>
-    </div>
+  <h2>3. Disqualifiers</h2>
+  <p>Any one of the following disqualifies a record — suppress rather than dial:</p>
+  <ul>
+    <li>No active marketing budget</li>
+    <li>No program/service/membership infrastructure to monetize</li>
+    <li>Outside the $1M–$50M budget band</li>
+    <li>Outside the three org types, or outside current US scope</li>
+  </ul>
 
-    <p class="footer-note">Source: Ideal Customer Profile — Deliverable 02, v4 · Confidential — Internal Operating Document</p>
-  </div>
+  <h2>4. Fit Tiering (Recommendation)</h2>
+  <table class="tier-table">
+    <tr><th>Tier</th><th>Criteria</th><th>Action</th></tr>
+    <tr class="tier1"><td>Tier 1</td><td>Org type + budget + confirmed pain point + capacity to fill + US-based</td><td>Priority dial</td></tr>
+    <tr class="tier2"><td>Tier 2</td><td>Org type + budget match; pain point/capacity unconfirmed</td><td>Discovery-first script</td></tr>
+    <tr class="tier3"><td>Tier 3</td><td>Fails any disqualifier (Section 3)</td><td>Suppress</td></tr>
+  </table>
+
+  <h2>5. Geographic Scope</h2>
+  <table class="geo-table">
+    <tr><td>Phase 1 (Now)</td><td>United States, nationwide</td></tr>
+    <tr><td>Phase 2 (Next)</td><td>Canada — timeline, provinces, and compliance review not yet defined</td></tr>
+  </table>
+
+  <h2>6. Action Items</h2>
+  <table class="action-table">
+    <tr><th>Action Item</th><th>Owner</th><th>Priority</th><th>Feeds</th></tr>
+    <tr>
+      <td>Confirm one benchmark reference account for Trade segment (Mental Health resolved — CPI)</td>
+      <td>Kaelene</td>
+      <td class="priority-high">High</td>
+      <td>Messaging Framework</td>
+    </tr>
+    <tr>
+      <td>Confirm ICSW segment mapping (Higher-Ed vs. Trade)</td>
+      <td>Kaelene</td>
+      <td class="priority-medium">Medium</td>
+      <td>This document</td>
+    </tr>
+    <tr>
+      <td>Define Canada Phase 2 timeline and compliance scope</td>
+      <td>Damon</td>
+      <td class="priority-low">Low</td>
+      <td>Outbound Strategy</td>
+    </tr>
+    <tr>
+      <td>Document named competitors for messaging contrast</td>
+      <td>Kaelene</td>
+      <td class="priority-medium">Medium</td>
+      <td>Messaging Framework</td>
+    </tr>
+  </table>
+
+  <footer>Confidential — Internal Operating Document</footer>
+
 </body>
+</html>

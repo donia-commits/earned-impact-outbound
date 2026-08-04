@@ -1,225 +1,465 @@
-<title>Cold Calling Scripts — Earned Impact</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="../css/styles.css">
+<title>Earned Impact — Master Outbound Script Package</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --orange:#E15A24;
+    --orange-dark:#B8451A;
+    --ink:#191714;
+    --paper:#FBF9F6;
+    --panel:#FFFFFF;
+    --line:#E7E1D8;
+    --tint:#FBEBE3;
+    --muted:#7A7368;
+    --mono-tint:#F4F0EA;
+    --step-rail:#EFE6DC;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    font-size:16px;
+    line-height:1.55;
+  }
+  h1,h2,h3,h4{font-family:'Space Grotesk',system-ui,sans-serif; margin:0; letter-spacing:-0.01em;}
 
+  /* ---------- Top masthead ---------- */
+  .masthead{
+    background:var(--ink);
+    color:#fff;
+    padding:26px 32px 22px;
+    position:relative;
+    overflow:hidden;
+  }
+  .masthead::after{
+    content:"";
+    position:absolute; right:-60px; top:-90px;
+    width:220px; height:220px; border-radius:50%;
+    background:var(--orange);
+    opacity:0.9;
+  }
+  .masthead-inner{position:relative; z-index:1; max-width:1180px; margin:0 auto;}
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:#D7CFC3;
+    margin-bottom:10px;
+  }
+  .eyebrow b{color:var(--orange);}
+  .masthead h1{font-size:clamp(28px,4vw,42px); font-weight:700; color:#fff; max-width:720px;}
+  .masthead p.sub{color:#C9C1B5; max-width:640px; margin-top:10px; font-size:15px;}
+  .meta-row{
+    display:flex; flex-wrap:wrap; gap:22px 40px;
+    margin-top:20px; padding-top:18px;
+    border-top:1px solid rgba(255,255,255,0.14);
+  }
+  .meta-item .k{font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:#9B9285;}
+  .meta-item .v{font-size:14px; color:#F2EEE7; margin-top:3px; max-width:280px;}
+
+  /* ---------- Layout ---------- */
+  .layout{max-width:1180px; margin:0 auto; display:grid; grid-template-columns:230px 1fr; gap:36px; padding:32px;}
+  @media (max-width:880px){ .layout{grid-template-columns:1fr; padding:20px;} }
+
+  nav.toc{position:sticky; top:20px; align-self:start; max-height:calc(100vh - 40px); overflow-y:auto; padding-right:6px;}
+  @media (max-width:880px){ nav.toc{position:static; max-height:none; margin-bottom:8px;} }
+  nav.toc .toc-label{font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:10px;}
+  nav.toc a{
+    display:block; font-size:13.5px; color:#55504A; text-decoration:none;
+    padding:7px 0 7px 12px; border-left:2px solid var(--line);
+    transition:border-color .15s, color .15s, background .15s;
+  }
+  nav.toc a:hover{color:var(--ink);}
+  nav.toc a.active{border-color:var(--orange); color:var(--orange-dark); font-weight:600; background:var(--tint);}
+
+  main{min-width:0;}
+
+  section{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:26px 30px;
+    margin-bottom:22px;
+    scroll-margin-top:20px;
+  }
+  section.context-card{background:linear-gradient(180deg,#fff, #fff);}
+  .sec-num{
+    font-family:'JetBrains Mono',monospace; color:var(--orange); font-size:13px; letter-spacing:.06em;
+  }
+  section h2{font-size:22px; font-weight:700; margin-top:4px; padding-bottom:14px; border-bottom:2px solid var(--orange); margin-bottom:16px;}
+
+  .label{
+    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--orange-dark); margin:18px 0 6px; font-weight:600;
+  }
+  .label:first-of-type{margin-top:4px;}
+  p{margin:0 0 10px; color:#312D28;}
+  p.muted{color:var(--muted); font-style:italic; font-size:14.5px;}
+
+  ul.plain{margin:0 0 6px; padding-left:20px;}
+  ul.plain li{margin-bottom:7px; color:#312D28;}
+
+  blockquote.script{
+    margin:8px 0 14px; padding:12px 16px;
+    border-left:3px solid var(--orange);
+    background:var(--mono-tint);
+    border-radius:0 6px 6px 0;
+    font-style:italic; color:#211E1A; font-size:15px;
+  }
+
+  /* call flow rail */
+  .flow{list-style:none; margin:14px 0 10px; padding:0; position:relative;}
+  .flow::before{
+    content:""; position:absolute; left:15px; top:6px; bottom:6px; width:2px; background:var(--step-rail);
+  }
+  .flow-step{position:relative; padding-left:46px; margin-bottom:18px;}
+  .flow-step .dot{
+    position:absolute; left:0; top:0; width:32px; height:32px; border-radius:50%;
+    background:var(--ink); color:var(--orange); font-family:'JetBrains Mono',monospace; font-weight:600; font-size:13px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .flow-step .step-label{font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--orange-dark); font-weight:600; margin-bottom:4px;}
+
+  /* tables */
+  table{width:100%; border-collapse:collapse; margin:12px 0 6px; font-size:14.5px;}
+  th{
+    background:var(--orange); color:#fff; text-align:left; padding:10px 12px; font-weight:600; font-size:13px;
+  }
+  td{padding:12px; border-bottom:1px solid var(--line); vertical-align:top; color:#312D28;}
+  tr:nth-child(even) td{background:#FDF6F1;}
+  .ctx-table td:first-child{font-weight:600; color:var(--ink); width:150px; background:transparent !important;}
+
+  /* checklist */
+  .check-item{
+    display:flex; align-items:flex-start; gap:10px; padding:8px 0; cursor:pointer; user-select:none;
+  }
+  .check-item input{margin-top:3px; width:16px; height:16px; accent-color:var(--orange); cursor:pointer;}
+  .check-item span{font-size:15px;}
+  .check-item.checked span{color:var(--muted); text-decoration:line-through;}
+
+  .proof-block{margin-bottom:14px;}
+  .proof-vertical{font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--orange-dark); font-weight:600; margin-bottom:4px;}
+
+  .changelog{list-style:none; padding:0; margin:0;}
+  .changelog li{padding:8px 0 8px 20px; position:relative; border-bottom:1px dashed var(--line); font-size:14.5px;}
+  .changelog li:last-child{border-bottom:none;}
+  .changelog li::before{content:"→"; position:absolute; left:0; color:var(--orange); font-weight:700;}
+
+  footer{
+    max-width:1180px; margin:0 auto; padding:8px 32px 40px; color:var(--muted); font-size:12.5px;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
+  }
+
+  ::selection{background:var(--tint);}
+  a{color:var(--orange-dark);}
+  @media print{
+    nav.toc, .no-print{display:none !important;}
+    .layout{grid-template-columns:1fr; display:block;}
+    section{break-inside:avoid; border:none; padding:0 0 20px;}
+  }
+</style>
+</head>
 <body>
-  <div class="wrap">
-    <div class="page-header">
-      <div>
-        <p class="eyebrow">Earned Impact · SDR Script Package v1</p>
-        <h1>Cold Calling Scripts</h1>
-      </div>
-      <a class="back-link" href="../index.html">← Back to Dashboard</a>
+  <a href="../index.html" style="display:inline-block;margin-bottom:20px;font:600 13px/1.2 Calibri,'Segoe UI',Arial,sans-serif;color:var(--orange);text-decoration:none;border:1px solid var(--orange);padding:8px 14px;border-radius:6px;">← Back to Dashboard</a>
+
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="eyebrow">Earned Impact <b>·</b> Outbound Operating System <b>·</b> Supports Doc 1 (Discovery Summary)</div>
+    <h1>Master Outbound Script Package</h1>
+    <p class="sub">Consultative, discovery-led framework — first deployed on nonprofit enrollment &amp; mental health pipeline outreach, built to carry forward unchanged to every future vertical.</p>
+    <div class="meta-row">
+      <div class="meta-item"><div class="k">Client</div><div class="v">Earned Impact</div></div>
+      <div class="meta-item"><div class="k">Prepared For</div><div class="v">Damon Stewart, Managing Partner</div></div>
+      <div class="meta-item"><div class="k">Prepared By</div><div class="v">Outbound Operations</div></div>
+      <div class="meta-item"><div class="k">Version</div><div class="v">v2 — consultative revision</div></div>
+      <div class="meta-item"><div class="k">Reusability</div><div class="v">Only ICP, terminology, examples, proof, and pain language change per vertical</div></div>
     </div>
-
-    <div class="content-card">
-      <p class="kicker">Nonprofit Enrollment &amp; Mental Health Pipeline Campaign — Earned Impact's own outbound (pre-client-onboarding proving ground). Modular by section — swap the bracketed variables to redeploy for future clients.</p>
-
-      <section>
-        <h2>0. Campaign Context (Locked from Discovery)</h2>
-        <ul class="tight">
-          <li><strong>Offer, in plain language:</strong> help nonprofits build the earned-income engine — enrollments, appointments, memberships — that funds their mission on their own terms.</li>
-          <li><strong>Priority sequence:</strong> enrollment marketing first, mental health client-pipeline building second.</li>
-          <li><strong>Buyer:</strong> Executive Director, President, or other director-level decision-maker.</li>
-          <li><strong>ICP:</strong> nonprofit budget $1M–$50M; small universities, mental-health therapy nonprofits, trade organizations; US now, Canada next.</li>
-          <li><strong>Disqualifiers:</strong> no marketing budget, no program capacity to absorb new demand, or outside the ICP above.</li>
-          <li><strong>Standing guardrail:</strong> no guarantees, ever. Stay highly professional at all times. Do not blend in the separate B2B offer.</li>
-          <li><strong>Success definition:</strong> a qualified appointment is a quick no or a real conversation toward a decision — not a stall.</li>
-        </ul>
-        <p class="note">If the target shifts (industry, buyer, offer), only Section 0 and the bracketed variables need to change — the psychology and structure carry over.</p>
-      </section>
-
-      <section>
-        <h2>1. Cold Call Script</h2>
-        <h3>Objective</h3>
-        <p>Earn 20 seconds of permission, surface whether the org is structurally dependent on restricted funding, and move a genuinely relevant prospect toward a booked meeting — without pitching services.</p>
-        <h3>Psychology</h3>
-        <p>Executive directors are pattern-trained to hang up on agency pitches within the first five words. The opening has to signal self-awareness ("you weren't expecting this call") and ask for permission rather than assume it. Permission-based openers measurably lower the guard because they hand control back to the prospect.</p>
-        <h3>Script</h3>
-        <div class="script-line"><strong>Rep:</strong> "Hi [Name] — this is [Rep] with Earned Impact. I'll be honest, this is a cold call and you weren't expecting it. Do you have twenty seconds?"</div>
-        <div class="script-line">[If yes] <strong>Rep:</strong> "Appreciate it. We work with [nonprofit type — e.g., mental health nonprofits / small universities] on growing the revenue they generate directly — enrollments, appointments, memberships — so they're less boxed in by grant and donor restrictions. I'm reaching out to a handful of similar organizations to see if that's on your radar. Is that something you and your team have been wrestling with lately?"</div>
-        <div class="script-line">[If engaged] <strong>Rep:</strong> "Can I ask — is it more that [enrollment / appointment volume] has softened, or that the funding you do have comes with more strings than it used to?"</div>
-        <div class="script-line">[Listen. Reflect back in one sentence. Then:] <strong>Rep:</strong> "That's exactly the kind of thing we help with. Rather than get into it on a cold call, would it be worth fifteen minutes with [our team] to see if there's a fit? No pressure either way — if it's not relevant, you'll know in the first five minutes."</div>
-        <h3>Why It Works</h3>
-        <p>The permission ask filters out hostile responses early. The one diagnostic question does the qualifying instead of a features pitch. "No pressure either way" mirrors the client's own no-guarantees, non-pushy standard and lowers resistance to booking.</p>
-        <h3>Alternative Opener (Referral / Warm Angle)</h3>
-        <div class="script-line"><strong>Rep:</strong> "Hi [Name], this is [Rep] with Earned Impact — we just wrapped a project with [comparable org, e.g., a mental-health nonprofit] and I thought of [Org Name] because you're a similar size and mission. Got twenty seconds?"</div>
-      </section>
-
-      <section>
-        <h2>2. Gatekeeper Version</h2>
-        <h3>Objective</h3>
-        <p>Get past the front desk or assistant without sounding like a vendor cold call, and without asking the gatekeeper to make a judgment call they're not equipped to make.</p>
-        <h3>Psychology</h3>
-        <p>Gatekeepers are trained to screen out sales calls, not colleagues. Speaking briefly, using a first name only, and asking a direct routing question reads as internal or peer traffic rather than outbound sales.</p>
-        <h3>Script</h3>
-        <div class="script-line"><strong>Rep:</strong> "Hi, this is [Rep] — quick one for you. Who handles growth or enrollment strategy over there, [Name] or someone else?"</div>
-        <div class="script-line">[If routed to voicemail or told to email] <strong>Rep:</strong> "That's great, thank you — could I get [Name]'s direct line, or should I go through you for a callback?"</div>
-        <div class="script-line">[If pressed on reason for calling] <strong>Rep:</strong> "Sure — we help nonprofits like yours build revenue outside of grants and donations. I just want thirty seconds with whoever owns that."</div>
-        <h3>Why It Works</h3>
-        <p>Asking a routing question rather than pitching gives the gatekeeper nothing to screen. Naming a real function ("growth or enrollment strategy") signals legitimacy without naming a sales motive.</p>
-      </section>
-
-      <section>
-        <h2>3. Voicemail</h2>
-        <h3>Objective</h3>
-        <p>Leave a message that earns an open on the follow-up email — not one that tries to close on its own.</p>
-        <h3>Psychology</h3>
-        <p>Long voicemails get deleted. A short, specific, no-ask message that promises a follow-up email reduces the cognitive load on the prospect and gives them a lower-effort way to respond (reply to email vs. call back a stranger).</p>
-        <h3>Script</h3>
-        <div class="script-line"><strong>Rep:</strong> "Hi [Name], this is [Rep] with Earned Impact. We work with organizations like [Org Name] on growing enrollment and appointment revenue outside of grants and donations. I'll send a short email over so you have something concrete to look at — if it's relevant, I'd welcome fifteen minutes. Talk soon."</div>
-        <h3>Why It Works</h3>
-        <p>No cliffhanger, no false urgency — consistent with the client's professional, no-guarantees tone. The voicemail's only job is to make the email feel expected rather than cold.</p>
-      </section>
-
-      <section>
-        <h2>4. Objection Handling</h2>
-        <p class="note">Responses below are reframes, not rebuttals — the goal is to keep the prospect talking, not to win the exchange.</p>
-        <table class="objection-table">
-          <thead>
-            <tr><th>Objection</th><th>Response</th><th>Why It Works</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>"Not in this year's budget."</td>
-              <td>"Completely fair — most of the organizations we work with weren't budgeting for it either. What usually changes their mind is that the program pays for itself once it's running, so it's less a new cost and more a new revenue line. Worth fifteen minutes to see if the math would work for you?"</td>
-              <td>Reframes budget as a documented objection the client already flagged; positions the offer as self-funding rather than a new expense.</td>
-            </tr>
-            <tr>
-              <td>"We already have a marketing agency / handle it internally."</td>
-              <td>"Good to hear you're already investing in it. Most teams we talk to are focused on branding or donor marketing — we're narrowly focused on earned revenue: enrollments, appointments, memberships. Different lane, so it's worth a quick look even alongside what you already have."</td>
-              <td>Avoids positioning as a replacement, which lowers loyalty-based resistance, and narrows the offer to a gap competitors rarely cover.</td>
-            </tr>
-            <tr>
-              <td>"We're too busy / don't have the bandwidth."</td>
-              <td>"That's actually the exact reason clients bring us in — the goal isn't to hand your team another project, it's to be a multiplier so you're not adding headcount. Think of it as a team of ten for less than the cost of one hire."</td>
-              <td>Directly reuses the client's own documented reframe, so messaging stays consistent across every SDR.</td>
-            </tr>
-            <tr>
-              <td>"Send me some information."</td>
-              <td>"Happy to — I'll send a short one-pager over now. While I've got you, can I ask one question so what I send is actually relevant: is the bigger gap enrollments, appointments, or member growth?"</td>
-              <td>Complies with the request (builds trust) while extracting one more qualifying data point instead of letting the call end with nothing.</td>
-            </tr>
-            <tr>
-              <td>"We're not looking right now."</td>
-              <td>"Understood, and I won't push. Would it be reasonable to check back in a quarter, or is there a better time of year for you, budget-cycle-wise?"</td>
-              <td>Protects the relationship for future re-engagement instead of forcing a close, consistent with the no-pressure standing rule.</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section>
-        <h2>5. Discovery Questions</h2>
-        <p class="note">Use two to three of these per call — never all of them. Pick based on where the prospect showed energy.</p>
-        <ol class="tight">
-          <li>What does a strong month look like for you right now — enrollments, appointments, or new members?</li>
-          <li>How much of your current budget is grants and donations versus revenue you generate directly?</li>
-          <li>If that ratio doesn't shift, what does the next twelve months look like for your team?</li>
-          <li>What's slowed you down in the past when you've tried to grow that side of the organization?</li>
-          <li>Have you worked with an outside team on this before? What worked, and what didn't?</li>
-          <li>Who else would need to be in the room if this moved forward?</li>
-        </ol>
-      </section>
-
-      <section>
-        <h2>6. Qualification Checklist</h2>
-        <p class="note">An appointment only counts as qualified if every box below is checked. Ties directly to the ICP in Section 0 and the Discovery Summary.</p>
-        <ul class="tight">
-          <li>US-based nonprofit (Canada only if explicitly pre-approved)</li>
-          <li>Annual budget between $1M and $50M</li>
-          <li>Org type: small university, mental-health therapy nonprofit, or trade/membership association</li>
-          <li>Has an active marketing budget or clear willingness to allocate one</li>
-          <li>Has program capacity to absorb new enrollments / appointments / members (i.e., not disqualified for lack of infrastructure)</li>
-          <li>Contact is Executive Director, President, or another director-level decision-maker</li>
-          <li>Pain point confirmed in the prospect's own words (enrollment, appointments, or membership shortfall)</li>
-          <li>No conflicting exclusivity with a competing agency for this specific offer</li>
-        </ul>
-      </section>
-
-      <section>
-        <h2>7. Meeting Booking Transition</h2>
-        <h3>Objective</h3>
-        <p>Convert a warm, qualified conversation into a booked meeting without sounding like a pivot into "sales mode."</p>
-        <h3>Script</h3>
-        <div class="script-line"><strong>Rep:</strong> "Based on what you're describing, I think this is worth a real conversation rather than me guessing on a cold call. I'd like to get you on a call with [Name/Title] — they can walk through what this has looked like for organizations like [Comparable Org] and you can decide from there if it's worth pursuing. I've got [Day/Time] or [Day/Time] — which works better?"</div>
-        <h3>Why It Works</h3>
-        <p>Framing the meeting as "so you can decide" rather than "so we can pitch you" keeps the peer-to-peer tone and avoids triggering last-minute resistance right before the ask.</p>
-      </section>
-
-      <section>
-        <h2>8. Follow-Up Email</h2>
-        <h3>Objective</h3>
-        <p>Give the prospect something concrete to reference after the call or voicemail, written the way one operator writes to another.</p>
-        <h3>Template</h3>
-        <div class="script-line">
-          <strong>Subject:</strong> Following up — [Org Name] and unrestricted revenue<br><br>
-          Hi [Name],<br><br>
-          Following up on my voicemail / our call. We work with organizations like yours on growing the revenue you generate directly — enrollments, appointments, memberships — so less of your budget is tied to grant or donor restrictions.<br><br>
-          A quick example: [Comparable proof point, e.g., a mental-health therapy nonprofit increased appointment revenue significantly within a year of starting].<br><br>
-          If it's useful, I'd like to grab fifteen minutes to see whether something similar could apply at [Org Name] — no pressure if the timing isn't right.<br><br>
-          [Calendar link]<br>
-          [Rep name / title / phone]
-        </div>
-        <h3>Why It Works</h3>
-        <p>Short, specific, one proof point, one soft ask. No urgency language or guarantees, consistent with the client's standing tone rule.</p>
-      </section>
-
-      <section>
-        <h2>9. Follow-Up LinkedIn Message</h2>
-        <div class="script-line">"Hi [Name] — I left you a voicemail / we spoke briefly about growing enrollment and appointment revenue at [Org Name]. Wanted to connect here in case it's easier to keep track of. Happy to share what's worked for similar organizations whenever it's useful."</div>
-        <h3>Why It Works</h3>
-        <p>Low-commitment ask (a connection, not a meeting) keeps the relationship open for prospects who aren't ready to book yet.</p>
-      </section>
-
-      <section>
-        <h2>10. Follow-Up SMS</h2>
-        <p class="note">Use only after a prior conversation or explicit opt-in — never as a cold-outreach channel.</p>
-        <div class="script-line">"Hi [Name], this is [Rep] from Earned Impact — following up on our call. Sent an email with a quick example of what we've done for similar organizations. Let me know if it's worth 15 min."</div>
-      </section>
-
-      <section>
-        <h2>11. Playbook Integration Notes</h2>
-        <ul class="tight">
-          <li>Every bracketed variable ([Name], [Org Name], [nonprofit type], [proof point]) is the only thing that changes when this package is redeployed for a future client such as TriChad — the underlying psychology and sequencing stay fixed.</li>
-          <li>Recommend this package becomes a living template in the shared knowledge base so Cooper's informal training with Sarah is no longer the only source of objection handling.</li>
-          <li>Recommend versioning this doc (v1, v2…) each time an opener or objection response is field-tested and revised, mirroring the Discovery Summary's own v2 revision pattern.</li>
-          <li>Recommend a QA rubric scoring each recorded call against Sections 1–7 above, feeding the Reporting &amp; QA layer of the outbound stack.</li>
-          <li>Open item: named competitors are still missing from Discovery — once confirmed, add a direct-comparison objection response here.</li>
-        </ul>
-      </section>
-
-      <section>
-        <h2>Ideas for the Hook — "Earned Revenue Growth Blueprint"</h2>
-        <p><strong>Purpose:</strong> increase meeting acceptance by replacing generic discovery calls with a high-value, customized deliverable that prospects receive simply for attending.</p>
-        <p><strong>The Offer:</strong> every qualified prospect receives a custom "Earned Revenue Growth Blueprint" for their organization — a strategic overview, not a sales pitch.</p>
-        <h3>Deliverable Outline</h3>
-        <ol class="tight">
-          <li><strong>Snapshot:</strong> current programs, audiences, revenue model, and initial observations.</li>
-          <li><strong>Growth Opportunities:</strong> specific paths (e.g., enrollment, partnerships, membership).</li>
-          <li><strong>Revenue Constraints:</strong> bottlenecks (e.g., dependency on grants, weak pipelines).</li>
-          <li><strong>Quick Wins:</strong> three immediate, actionable recommendations.</li>
-          <li><strong>Sample Strategy:</strong> a high-level concept (audience, channel, and messaging).</li>
-        </ol>
-        <h3>Why This Works</h3>
-        <ul class="tight">
-          <li><strong>For Prospects:</strong> they receive concrete value regardless of whether they become a client.</li>
-          <li><strong>For Earned Impact:</strong> it differentiates us from generic agencies, increases meeting conversion, and shifts conversations from "sales" to "consultative."</li>
-        </ul>
-        <h3>Positioning Statement</h3>
-        <div class="script-line">"Join us for a 20-minute strategy session, and we'll prepare a customized Earned Revenue Growth Blueprint for your organization. You'll walk away with actionable recommendations — whether we work together or not."</div>
-        <h3>Discussion Points for Damon</h3>
-        <ul class="tight">
-          <li><strong>Alignment:</strong> does this fit our long-term positioning?</li>
-          <li><strong>Strategy:</strong> should this be standardized across all outbound campaigns?</li>
-          <li><strong>Scale:</strong> what is a realistic level of effort/customization for the team per meeting?</li>
-          <li><strong>Execution:</strong> should we build a modular, reusable template to streamline this process?</li>
-        </ul>
-      </section>
-    </div>
-
-    <p class="footer-note">Source: SDR Script Package v1 · Confidential — Internal Operating Document</p>
   </div>
+</header>
+
+<div class="layout">
+  <nav class="toc">
+    <div class="toc-label">On this page</div>
+    <a href="#changelog">What changed from v1</a>
+    <a href="#context">0 · Campaign context</a>
+    <a href="#coldcall">1 · Cold call script</a>
+    <a href="#gatekeeper">2 · Gatekeeper version</a>
+    <a href="#voicemail">3 · Voicemail</a>
+    <a href="#objections">4 · Objection handling</a>
+    <a href="#discovery">5 · Discovery questions</a>
+    <a href="#qualification">6 · Qualification checklist</a>
+    <a href="#proof">7 · Proof blocks</a>
+    <a href="#transition">8 · Meeting transition</a>
+    <a href="#email">9 · Follow-up email</a>
+    <a href="#linkedin">10 · Follow-up LinkedIn</a>
+    <a href="#sms">11 · Follow-up SMS</a>
+    <a href="#playbook">12 · Playbook notes</a>
+  </nav>
+
+  <main>
+
+    <section id="changelog">
+      <div class="sec-num">CHANGE LOG</div>
+      <h2>What changed from v1</h2>
+      <ul class="changelog">
+        <li>Cold call now delays the pitch — opens on a shared theme across nonprofits, not on Earned Impact's solution.</li>
+        <li>Replaced statements with questions throughout; added a summarize → ask → summarize → invite rhythm instead of jumping straight to "that's exactly what we help with."</li>
+        <li>Adopted Damon's language (unrestricted revenue, earned-income engine, constrained resources, without increasing headcount) in place of generic agency phrasing.</li>
+        <li>Objections rewritten to sound conversational and end in a question, not a close.</li>
+        <li>Discovery expanded into seven categories to choose from (2–4 questions per call, not a fixed list).</li>
+        <li>Added soft qualification guidance (authority, budget, need, timing, capacity) in plain language — no BANT terminology.</li>
+        <li>Added optional one-sentence proof blocks by vertical.</li>
+        <li>Meeting transition reframed as a working session rather than a pitch meeting.</li>
+        <li>Gatekeeper and voicemail were already working — left structurally unchanged, language lightly aligned to Damon's terms.</li>
+      </ul>
+    </section>
+
+    <section id="context" class="context-card">
+      <div class="sec-num">SECTION 0</div>
+      <h2>Campaign Context (Locked From Discovery)</h2>
+      <table class="ctx-table">
+        <tr><td>Offer</td><td>Help nonprofits build the earned-income engine — enrollments, appointments, memberships — that funds their mission on their own terms.</td></tr>
+        <tr><td>Priority</td><td>Enrollment marketing first; mental health client-pipeline building second.</td></tr>
+        <tr><td>Buyer</td><td>Executive Director, President, or other director-level decision-maker.</td></tr>
+        <tr><td>ICP</td><td>Nonprofit budget $1M–$50M; small universities, mental-health therapy nonprofits, trade organizations; US now, Canada next.</td></tr>
+        <tr><td>Disqualifiers</td><td>No marketing budget, no program capacity to absorb new demand, or outside the ICP above.</td></tr>
+        <tr><td>Guardrail</td><td>No guarantees, ever. Stay highly professional at all times. Do not blend in the separate B2B offer.</td></tr>
+        <tr><td>Success</td><td>A qualified appointment is a quick no or a real conversation toward a decision — not a stall.</td></tr>
+      </table>
+      <p class="muted">Every script below is written to this context. If the target shifts (industry, buyer, offer), only Section 0 and the bracketed variables need to change — the psychology and structure carry over.</p>
+    </section>
+
+    <section id="coldcall">
+      <div class="sec-num">SECTION 1</div>
+      <h2>Cold Call Script</h2>
+      <div class="label">Objective</div>
+      <p>Start a real conversation, understand the organization's current reality, and diagnose fit — with the meeting, not the cold call, as the place the solution actually gets discussed.</p>
+      <div class="label">Psychology</div>
+      <p>The first minute should feel like discovery, not positioning. Naming Earned Impact's solution too early triggers the same pattern-recognition that gets agency calls hung up on. Leading with an observation about a shared theme across nonprofits — and letting the prospect talk more than the rep — builds the sense that this is a conversation between peers, not a pitch.</p>
+
+      <ol class="flow">
+        <li class="flow-step"><div class="dot">1</div><div class="step-label">Open — permission, not pitch</div>
+          <blockquote class="script">Rep: "Hi [Name] — this is [Rep] with Earned Impact. I'll be straight with you, this is a cold call and you weren't expecting it. Do you have twenty seconds?"</blockquote>
+        </li>
+        <li class="flow-step"><div class="dot">2</div><div class="step-label">Bridge to a shared theme — delay the pitch</div>
+          <blockquote class="script">[If yes] Rep: "Appreciate it. We've been talking with quite a few nonprofits recently, and one theme keeps coming up — a lot of teams are working with constrained resources and still leaning hard on grants and donor dollars to grow. Does that sound familiar for [Org Name]?"</blockquote>
+        </li>
+        <li class="flow-step"><div class="dot">3</div><div class="step-label">Ask, don't tell</div>
+          <blockquote class="script">Rep: "How are you currently growing unrestricted revenue — enrollment, appointments, membership, whatever that looks like for you — versus what's still tied to grants or donations?"</blockquote>
+        </li>
+        <li class="flow-step"><div class="dot">4</div><div class="step-label">Summarize, then ask again</div>
+          <blockquote class="script">Rep: [Reflect back what was said in one sentence — e.g.,] "So it sounds like enrollment's held up, but the donor side has gotten less predictable." "Has that become a bigger conversation internally?"</blockquote>
+        </li>
+        <li class="flow-step"><div class="dot">5</div><div class="step-label">Let it expand, summarize once more</div>
+          <blockquote class="script">[Prospect expands] Rep: "That makes sense — a lot of what we're hearing is teams wanting to build more of an earned-income engine so they're not as dependent on restricted funding, without having to add headcount to get there."</blockquote>
+        </li>
+        <li class="flow-step"><div class="dot">6</div><div class="step-label">Optional proof — one sentence, only if it fits</div>
+          <p class="muted">See Section 7 for vertical-matched proof blocks. Insert at most one, right here, only if it fits naturally.</p>
+        </li>
+        <li class="flow-step"><div class="dot">7</div><div class="step-label">Invite to a working session, not a pitch</div>
+          <blockquote class="script">Rep: "Would it be worth putting fifteen minutes on the calendar — not a pitch, just a working session to see whether there's something here worth pursuing?"</blockquote>
+        </li>
+      </ol>
+
+      <div class="label">Why it works</div>
+      <p>Each step earns the right to the next one. The prospect is doing most of the talking by Step 4, so the meeting ask in Step 7 lands as a natural next step in a conversation they've been driving — not a close the rep has been steering toward.</p>
+      <div class="label">Alternative opener (referral / warm angle)</div>
+      <blockquote class="script">Rep: "Hi [Name], this is [Rep] with Earned Impact — we just wrapped a project with [comparable org] and I thought of [Org Name] because you're a similar size and mission. Got twenty seconds?"</blockquote>
+    </section>
+
+    <section id="gatekeeper">
+      <div class="sec-num">SECTION 2</div>
+      <h2>Gatekeeper Version</h2>
+      <div class="label">Objective</div>
+      <p>Get past the front desk or assistant without sounding like a vendor cold call, and without asking the gatekeeper to make a judgment call they're not equipped to make.</p>
+      <div class="label">Psychology</div>
+      <p>Gatekeepers are trained to screen out sales calls, not colleagues. Speaking briefly, using a first name only, and asking a direct routing question reads as internal or peer traffic rather than outbound sales.</p>
+      <div class="label">Script</div>
+      <blockquote class="script">Rep: "Hi, this is [Rep] — quick one for you. Who handles growth or enrollment strategy over there, [Name] or someone else?"</blockquote>
+      <blockquote class="script">[If routed to voicemail or told to email] Rep: "That's great, thank you — could I get [Name]'s direct line, or should I go through you for a callback?"</blockquote>
+      <blockquote class="script">[If pressed on reason for calling] Rep: "Sure — we help nonprofits like yours build unrestricted revenue outside of grants and donations. I just want thirty seconds with whoever owns that."</blockquote>
+      <div class="label">Why it works</div>
+      <p>Asking a routing question rather than pitching gives the gatekeeper nothing to screen. Naming a real function ("growth or enrollment strategy") signals legitimacy without naming a sales motive.</p>
+    </section>
+
+    <section id="voicemail">
+      <div class="sec-num">SECTION 3</div>
+      <h2>Voicemail</h2>
+      <div class="label">Objective</div>
+      <p>Leave a message that earns an open on the follow-up email — not one that tries to close on its own.</p>
+      <div class="label">Psychology</div>
+      <p>Long voicemails get deleted. A short, specific, no-ask message that promises a follow-up email reduces the cognitive load on the prospect and gives them a lower-effort way to respond (reply to email vs. call back a stranger).</p>
+      <div class="label">Script</div>
+      <blockquote class="script">Rep: "Hi [Name], this is [Rep] with Earned Impact. We work with organizations like [Org Name] on building sustainable, unrestricted revenue — enrollment, appointments, membership — without adding headcount. I'll send a short email over so you have something concrete to look at — if it's relevant, I'd welcome fifteen minutes. Talk soon."</blockquote>
+      <div class="label">Why it works</div>
+      <p>No cliffhanger, no false urgency — consistent with the client's professional, no-guarantees tone. The voicemail's only job is to make the email feel expected rather than cold.</p>
+    </section>
+
+    <section id="objections">
+      <div class="sec-num">SECTION 4</div>
+      <h2>Objection Handling</h2>
+      <p>Never argue and never "overcome" an objection — reframe it in one or two sentences and hand it back as a question, the way someone who's had this exact conversation hundreds of times would.</p>
+      <table>
+        <tr><th style="width:20%">Objection</th><th style="width:42%">Response</th><th style="width:38%">Why It Works</th></tr>
+        <tr><td>"Not in this year's budget."</td><td>"Yeah, that's what most people tell us at first — until they realize it tends to pay for itself once it's running, so it ends up being less of a new cost and more of a new revenue line. Is budget the only piece, or is there more to it?"</td><td>Reframes budget as self-funding rather than a new expense, then hands the conversation back with a question instead of pressing for a yes.</td></tr>
+        <tr><td>"We already have a marketing agency / handle it internally."</td><td>"Good — sounds like that's already getting some attention. Most of what we see internally or from agencies is more brand and donor communications; we sit in a narrower lane, just enrollment, appointment, and membership revenue. Is that piece actually being covered today, or more of a gap?"</td><td>Doesn't position Earned Impact as a replacement, which avoids loyalty-based defensiveness, and turns the objection into a diagnostic question.</td></tr>
+        <tr><td>"We're too busy / don't have the bandwidth."</td><td>"That tracks — most teams we talk to are already stretched thin. The way clients tend to think about it is less 'another project' and more a way to do more without adding headcount. Does bandwidth feel like the real blocker, or is it more that you haven't tried something like this before?"</td><td>Reuses Damon's own "without increasing headcount" language, then separates the stated objection from what might actually be underneath it.</td></tr>
+        <tr><td>"Send me some information."</td><td>"Happy to send something over. So it's actually useful instead of generic — what's the bigger gap right now, enrollment, appointments, or membership growth?"</td><td>Complies with the request first, which builds trust, then uses it to extract one more qualifying detail rather than letting the call end with nothing.</td></tr>
+        <tr><td>"We're not looking right now."</td><td>"Totally fair, no pressure at all. Would it make sense to check back in a few months, or is there a point in your budget cycle that's better timing?"</td><td>Protects the relationship for future re-engagement instead of forcing a close, consistent with the no-guarantees, no-pressure standing rule.</td></tr>
+      </table>
+    </section>
+
+    <section id="discovery">
+      <div class="sec-num">SECTION 5</div>
+      <h2>Discovery Questions</h2>
+      <p>Choose two to four total across these categories, based on where the prospect showed energy — never work through the full list on one call.</p>
+      <div class="label">Current State</div>
+      <ul class="plain"><li>What does a strong month look like for you right now — enrollments, appointments, or new members?</li><li>What's changed in the last year on that front?</li></ul>
+      <div class="label">Revenue Model</div>
+      <ul class="plain"><li>How much of your current growth is grants and donor-driven versus revenue you generate directly?</li><li>How has that mix shifted over the last few years?</li></ul>
+      <div class="label">Growth Challenges</div>
+      <ul class="plain"><li>What's been the biggest challenge in growing the unrestricted side?</li><li>What's gotten in the way in the past when you've tried?</li></ul>
+      <div class="label">Internal Resources</div>
+      <ul class="plain"><li>How big is the team working on this day to day?</li><li>Is this something you're staffed for, or is it more ad hoc right now?</li></ul>
+      <div class="label">Marketing</div>
+      <ul class="plain"><li>What's currently in place — internal team, an agency, a mix?</li><li>How's that been working for you?</li></ul>
+      <div class="label">Decision Process</div>
+      <ul class="plain"><li>Who else would need to be involved if this moved forward?</li><li>How do decisions like this typically get made on your end?</li></ul>
+      <div class="label">Timing</div>
+      <ul class="plain"><li>Is this a live priority, or more of a next-budget-cycle conversation?</li><li>Has this become a bigger conversation internally recently?</li></ul>
+    </section>
+
+    <section id="qualification">
+      <div class="sec-num">SECTION 6</div>
+      <h2>Qualification Checklist</h2>
+      <p>An appointment only counts as qualified if every box below is checked. Ties directly to the ICP in Section 0.</p>
+      <div id="checklist">
+        <label class="check-item"><input type="checkbox"><span>US-based nonprofit (Canada only if explicitly pre-approved)</span></label>
+        <label class="check-item"><input type="checkbox"><span>Annual budget between $1M and $50M</span></label>
+        <label class="check-item"><input type="checkbox"><span>Org type: small university, mental-health therapy nonprofit, or trade/membership association</span></label>
+        <label class="check-item"><input type="checkbox"><span>Has an active marketing budget or clear willingness to allocate one</span></label>
+        <label class="check-item"><input type="checkbox"><span>Has program capacity to absorb new enrollments / appointments / members</span></label>
+        <label class="check-item"><input type="checkbox"><span>Contact is Executive Director, President, or another director-level decision-maker</span></label>
+        <label class="check-item"><input type="checkbox"><span>Pain point confirmed in the prospect's own words</span></label>
+        <label class="check-item"><input type="checkbox"><span>No conflicting exclusivity with a competing agency for this specific offer</span></label>
+      </div>
+      <div class="label">Soft Qualification Guidance</div>
+      <p class="muted">Use these as internal read-checks during the conversation, not as questions to ask verbatim.</p>
+      <ul class="plain">
+        <li><b>Authority</b> — are we talking with someone who can move this forward, or would this need to loop in someone else first?</li>
+        <li><b>Budget</b> — is there room to invest now, or would this need to be built into next year's plan?</li>
+        <li><b>Need</b> — did the pain point come from them, in their own words, or is the rep assuming it?</li>
+        <li><b>Timing</b> — is this a live priority, or something on a future horizon?</li>
+        <li><b>Capacity</b> — could they actually absorb more enrollments, appointments, or members if this worked?</li>
+      </ul>
+    </section>
+
+    <section id="proof">
+      <div class="sec-num">SECTION 7</div>
+      <h2>Proof Blocks (Optional, by Vertical)</h2>
+      <p>Insert at most one, one sentence only, and only where it fits naturally — usually right before the meeting ask. Never stack more than one, and never state a guarantee or specific number that hasn't been confirmed for this vertical.</p>
+      <div class="proof-block"><div class="proof-vertical">Mental Health</div><blockquote class="script">"We recently worked with a mental health organization facing something similar — appointment revenue picked up significantly within the year."</blockquote></div>
+      <div class="proof-block"><div class="proof-vertical">Higher Education</div><blockquote class="script">"We worked with a small university on the same enrollment challenge — they filled a cohort for the first time in years."</blockquote></div>
+      <div class="proof-block"><div class="proof-vertical">Membership Associations</div><blockquote class="script">"We helped a membership association rebuild retention through more consistent member communication, with a meaningful year-over-year increase."</blockquote></div>
+    </section>
+
+    <section id="transition">
+      <div class="sec-num">SECTION 8</div>
+      <h2>Meeting Booking Transition</h2>
+      <div class="label">Objective</div>
+      <p>Make the invitation feel like a continuation of the conversation the prospect has been driving — a working session they're accepting, not a demo they're being sold into.</p>
+      <div class="label">Script</div>
+      <blockquote class="script">Rep: "Based on what you're describing, this sounds worth a real conversation rather than me guessing on a cold call. I'd like to put you together with [Name/Title] for a working session — they'll walk through what this has looked like for organizations like [Comparable Org], and you can decide from there whether it's worth pursuing. I've got [Day/Time] or [Day/Time] — which works better?"</blockquote>
+      <div class="label">Why it works</div>
+      <p>"Working session" and "you can decide" keep the frame consultative rather than transactional, and avoid the jolt of a sudden pivot into sales mode right when the prospect is most engaged.</p>
+    </section>
+
+    <section id="email">
+      <div class="sec-num">SECTION 9</div>
+      <h2>Follow-Up Email</h2>
+      <div class="label">Objective</div>
+      <p>Give the prospect something concrete to reference after the call or voicemail, written the way one operator writes to another.</p>
+      <div class="label">Template</div>
+      <blockquote class="script">
+        Subject: Following up — [Org Name] and unrestricted revenue<br><br>
+        Hi [Name],<br><br>
+        Following up on my voicemail / our call. We work with organizations like yours on building sustainable, unrestricted revenue — enrollment, appointments, membership — without adding headcount to get there.<br><br>
+        A quick example: [proof point from Section 7, matched to their vertical].<br><br>
+        If it's useful, I'd like to grab fifteen minutes to see whether something similar could apply at [Org Name] — no pressure if the timing isn't right.<br><br>
+        [Calendar link]<br>
+        [Rep name / title / phone]
+      </blockquote>
+      <div class="label">Why it works</div>
+      <p>Short, specific, one proof point, one soft ask. No urgency language or guarantees, consistent with the client's standing tone rule.</p>
+    </section>
+
+    <section id="linkedin">
+      <div class="sec-num">SECTION 10</div>
+      <h2>Follow-Up LinkedIn Message</h2>
+      <div class="label">Template</div>
+      <blockquote class="script">"Hi [Name] — I left you a voicemail / we spoke briefly about building more unrestricted revenue at [Org Name]. Wanted to connect here in case it's easier to keep track of. Happy to share what's worked for similar organizations whenever it's useful."</blockquote>
+      <div class="label">Why it works</div>
+      <p>Low-commitment ask (a connection, not a meeting) keeps the relationship open for prospects who aren't ready to book yet.</p>
+    </section>
+
+    <section id="sms">
+      <div class="sec-num">SECTION 11</div>
+      <h2>Follow-Up SMS</h2>
+      <p class="muted">Use only after a prior conversation or explicit opt-in — never as a cold-outreach channel.</p>
+      <div class="label">Template</div>
+      <blockquote class="script">"Hi [Name], this is [Rep] from Earned Impact — following up on our call. Sent an email with a quick example of what we've done for similar organizations. Let me know if it's worth 15 min."</blockquote>
+    </section>
+
+    <section id="playbook">
+      <div class="sec-num">SECTION 12</div>
+      <h2>Playbook Integration Notes</h2>
+      <ul class="plain">
+        <li>This is now the Master Outbound Script Package — when adapting to a future vertical or client (e.g., TriChad), only the ICP, industry terminology, examples, proof points, and pain language in Sections 0 and 7 change. Structure, sequencing, and psychology stay fixed.</li>
+        <li>Recommend this package becomes a living template in the shared knowledge base (flagged as a gap in the Damon x Donia planning notes) so Cooper's informal training with Sarah is no longer the only source of objection handling.</li>
+        <li>Recommend a QA rubric scoring each recorded call against the summarize → ask → summarize → invite rhythm in Section 1, feeding the Reporting &amp; QA layer of the outbound stack.</li>
+        <li>Open item: named competitors are still missing from Discovery (Section 6 of the Discovery Summary) — once confirmed, add a direct-comparison objection response here.</li>
+      </ul>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <span>Confidential — Internal Operating Document</span>
+  <span class="no-print">Tip: press ⌘/Ctrl+P to save a clean PDF copy for offline reference.</span>
+</footer>
+
+<script>
+  // Scrollspy for sidebar nav
+  const links = Array.from(document.querySelectorAll('nav.toc a'));
+  const sections = links.map(l => document.querySelector(l.getAttribute('href')));
+  function onScroll(){
+    let idx = 0;
+    const pos = window.scrollY + 120;
+    sections.forEach((sec,i) => { if(sec && sec.offsetTop <= pos) idx = i; });
+    links.forEach(l => l.classList.remove('active'));
+    if(links[idx]) links[idx].classList.add('active');
+  }
+  document.addEventListener('scroll', onScroll);
+  onScroll();
+
+  // Checklist persistence not needed — purely visual per-session toggle
+  document.querySelectorAll('.check-item input').forEach(cb => {
+    cb.addEventListener('change', () => {
+      cb.closest('.check-item').classList.toggle('checked', cb.checked);
+    });
+  });
+</script>
+
 </body>
+</html>

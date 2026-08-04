@@ -1,86 +1,149 @@
-<title>Offer Strategy — Earned Impact</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="../css/styles.css">
-
+<title>Offer Strategy — Earned Impact</title>
+<style>
+  :root {
+    --orange: #E8531E;
+    --black: #111111;
+    --gray: #555555;
+    --light: #FBEAE2;
+    --border: #eee;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--black);
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 40px 32px 80px;
+    background: #ffffff;
+  }
+  .doc-tag {
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--gray);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .deliverable-label {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--orange);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 4px;
+  }
+  h1.title {
+    font-size: 32px;
+    margin: 0 0 8px 0;
+  }
+  .subtitle {
+    font-style: italic;
+    color: var(--gray);
+    font-size: 14px;
+    margin-bottom: 28px;
+  }
+  h2 {
+    font-size: 18px;
+    margin-top: 32px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--orange);
+  }
+  p.body-text {
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 8px 0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 4px;
+    font-size: 13px;
+  }
+  th {
+    background: var(--orange);
+    color: #ffffff;
+    text-align: left;
+    padding: 8px 12px;
+    font-weight: bold;
+  }
+  td {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+  }
+  tr:nth-child(even) td {
+    background: var(--light);
+  }
+  .note {
+    font-style: italic;
+    color: var(--gray);
+    font-size: 13px;
+    margin-top: 6px;
+  }
+  footer {
+    margin-top: 50px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--gray);
+  }
+</style>
+</head>
 <body>
-  <div class="wrap">
-    <div class="page-header">
-      <div>
-        <p class="eyebrow">Earned Impact · Deliverable 04 · v2 (simplified)</p>
-        <h1>Offer Strategy</h1>
-      </div>
-      <a class="back-link" href="../index.html">← Back to Dashboard</a>
-    </div>
+  <a href="../index.html" style="display:inline-block;margin-bottom:20px;font:600 13px/1.2 Calibri,'Segoe UI',Arial,sans-serif;color:var(--orange);text-decoration:none;border:1px solid var(--orange);padding:8px 14px;border-radius:6px;">← Back to Dashboard</a>
 
-    <div class="content-card">
-      <p class="kicker">What we sell, to whom, and why they buy.</p>
 
-      <section>
-        <h2>1. Executive Summary</h2>
-        <p>We help nonprofits build unrestricted, earned income instead of relying on grants and donations. First target: enrollment marketing for higher-ed and mental-health nonprofits ($1M–$50M budgets, US).</p>
-      </section>
+  <div class="doc-tag">EARNED IMPACT&nbsp;&nbsp;|&nbsp;&nbsp;OUTBOUND OPERATING SYSTEM&nbsp;&nbsp;|&nbsp;&nbsp;DOC 4 OF 18</div>
 
-      <section>
-        <h2>2. Primary Offer</h2>
-        <table class="objection-table">
-          <thead><tr><th>Offer</th><th>Target Segment</th><th>Outcome</th><th>Value Prop</th></tr></thead>
-          <tbody>
-            <tr><td>Enrollment marketing</td><td>Higher-ed nonprofits</td><td>More enrollments</td><td>Earned income they control</td></tr>
-            <tr><td>Client-pipeline building</td><td>Mental-health nonprofits</td><td>Full appointment capacity</td><td>Unrestricted revenue</td></tr>
-          </tbody>
-        </table>
-      </section>
+  <div class="deliverable-label">DELIVERABLE 04 · v2 (simplified)</div>
+  <h1 class="title">Offer Strategy</h1>
+  <div class="subtitle">What we sell, to whom, and why they buy.</div>
 
-      <section>
-        <h2>3. Why Clients Buy</h2>
-        <table class="objection-table">
-          <thead><tr><th>Problem</th><th>What They Want</th></tr></thead>
-          <tbody>
-            <tr><td>Losing grants and donors</td><td>Revenue they control, not restricted funding</td></tr>
-            <tr><td>Not enough enrollments / appointments</td><td>Full program capacity</td></tr>
-            <tr><td>Burnout from underfunding</td><td>Enough revenue to retain staff</td></tr>
-          </tbody>
-        </table>
-      </section>
+  <h2>1. Executive Summary</h2>
+  <p class="body-text">We help nonprofits build unrestricted, earned income instead of relying on grants and donations. First target: enrollment marketing for higher-ed and mental-health nonprofits ($1M–$50M budgets, US).</p>
 
-      <section>
-        <h2>4. Competitive Advantage</h2>
-        <table class="objection-table">
-          <thead><tr><th>Others</th><th>Earned Impact</th></tr></thead>
-          <tbody>
-            <tr><td>Grants and donor development</td><td>Earned, unrestricted income</td></tr>
-            <tr><td>Marketing vendor</td><td>Growth partner</td></tr>
-          </tbody>
-        </table>
-        <p class="note">Named competitors not yet documented.</p>
-      </section>
+  <h2>2. Primary Offer</h2>
+  <table>
+    <tr><th>Offer</th><th>Target Segment</th><th>Outcome</th><th>Value Prop</th></tr>
+    <tr><td>Enrollment marketing</td><td>Higher-ed nonprofits</td><td>More enrollments</td><td>Earned income they control</td></tr>
+    <tr><td>Client-pipeline building</td><td>Mental-health nonprofits</td><td>Full appointment capacity</td><td>Unrestricted revenue</td></tr>
+  </table>
 
-      <section>
-        <h2>5. Messaging by Segment</h2>
-        <table class="objection-table">
-          <thead><tr><th>Segment</th><th>Message</th><th>Proof</th></tr></thead>
-          <tbody>
-            <tr><td>Higher Ed</td><td>Fill your enrollment cohort.</td><td>ICSW — first full cohort in 5+ years</td></tr>
-            <tr><td>Mental Health</td><td>Turn open slots into revenue.</td><td>Chicago Psychoanalytic — 10x appointment revenue</td></tr>
-            <tr><td>Trade Assoc.</td><td>Grow membership revenue.</td><td>AMWA — strong y/y growth</td></tr>
-          </tbody>
-        </table>
-      </section>
+  <h2>3. Why Clients Buy</h2>
+  <table>
+    <tr><th>Problem</th><th>What They Want</th></tr>
+    <tr><td>Losing grants and donors</td><td>Revenue they control, not restricted funding</td></tr>
+    <tr><td>Not enough enrollments / appointments</td><td>Full program capacity</td></tr>
+    <tr><td>Burnout from underfunding</td><td>Enough revenue to retain staff</td></tr>
+  </table>
 
-      <section>
-        <h2>6. Open Items</h2>
-        <table class="objection-table">
-          <thead><tr><th>Action</th><th>Owner</th></tr></thead>
-          <tbody>
-            <tr><td>Confirm named competitors</td><td>Damon / Kaelene</td></tr>
-            <tr><td>Get ICSW case study detail</td><td>Kaelene</td></tr>
-          </tbody>
-        </table>
-      </section>
-    </div>
+  <h2>4. Competitive Advantage</h2>
+  <table>
+    <tr><th>Others</th><th>Earned Impact</th></tr>
+    <tr><td>Grants and donor development</td><td>Earned, unrestricted income</td></tr>
+    <tr><td>Marketing vendor</td><td>Growth partner</td></tr>
+  </table>
+  <div class="note">Named competitors not yet documented.</div>
 
-    <p class="footer-note">Source: Offer Strategy — Deliverable 04, v2 (simplified) · Confidential — Internal Operating Document</p>
-  </div>
+  <h2>5. Messaging by Segment</h2>
+  <table>
+    <tr><th>Segment</th><th>Message</th><th>Proof</th></tr>
+    <tr><td>Higher Ed</td><td>Fill your enrollment cohort.</td><td>ICSW — first full cohort in 5+ years</td></tr>
+    <tr><td>Mental Health</td><td>Turn open slots into revenue.</td><td>Chicago Psychoanalytic — 10x appointment revenue</td></tr>
+    <tr><td>Trade Assoc.</td><td>Grow membership revenue.</td><td>AMWA — strong y/y growth</td></tr>
+  </table>
+
+  <h2>6. Open Items</h2>
+  <table>
+    <tr><th>Action</th><th>Owner</th></tr>
+    <tr><td>Confirm named competitors</td><td>Damon / Kaelene</td></tr>
+    <tr><td>Get ICSW case study detail</td><td>Kaelene</td></tr>
+  </table>
+
+  <footer>Confidential — Internal Operating Document</footer>
+
 </body>
+</html>
